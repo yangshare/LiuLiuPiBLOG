@@ -5,8 +5,8 @@ FROM openjdk:8u312-oraclelinux7
 #维护者信息
 MAINTAINER yangshare <717449318@qq.com>
 
-ADD target/*.jar poetize-server.jar
+ADD target/*.jar liuliupi-server.jar
 
 EXPOSE 8082
 
-ENTRYPOINT ["java", "-jar", "poetize-server.jar"]
+ENTRYPOINT ["java", "-jar", "liuliupi-server.jar"]
