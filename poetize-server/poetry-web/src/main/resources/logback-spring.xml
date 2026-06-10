@@ -5,10 +5,10 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
     <!-- 模块名标识日志名称 -->
-    <springProperty scope="context" name="springAppName" source="spring.application.name" defaultValue="poetize"/>
+    <springProperty scope="context" name="springAppName" source="spring.application.name" defaultValue="liuliupi"/>
 
     <!-- 日志目录 -->
-    <springProperty scope="context" name="logback.rootDir" source="logback.rootDir" defaultValue="/home/poetize/logs"/>
+    <springProperty scope="context" name="logback.rootDir" source="logback.rootDir" defaultValue="/home/liuliupi/logs"/>
 
 
     <!-- info日志单文件大小限制 -->
