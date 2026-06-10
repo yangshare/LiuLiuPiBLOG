@@ -1,0 +1,66 @@
+### IDE ###
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+### AI 工具本地数据 ###
+.codegraph/
+.claude/
+
+### Java / Maven ###
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+!.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+
+### Node / 前端 ###
+node_modules/
+dist/
+build/
+
+# 本地环境变量
+.env.local
+.env.*.local
+
+# 包管理器锁文件（按需放开）
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# 调试日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+### 操作系统 ###
+.DS_Store
+Thumbs.db
+
+### 其他 ###
+HELP.md
