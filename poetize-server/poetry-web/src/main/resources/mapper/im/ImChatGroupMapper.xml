@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ld.poetry.im.http.dao.ImChatGroupMapper">
+<mapper namespace="com.liuliupi.im.http.dao.ImChatGroupMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.ld.poetry.im.http.entity.ImChatGroup">
+    <resultMap id="BaseResultMap" type="com.liuliupi.im.http.entity.ImChatGroup">
         <id column="id" property="id"/>
         <result column="group_name" property="groupName"/>
         <result column="master_user_id" property="masterUserId"/>
