@@ -3,11 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ld</groupId>
+    <groupId>com.liuliupi</groupId>
     <artifactId>poetry</artifactId>
     <version>2.0</version>
-    <name>POETIZE - 最美博客</name>
-    <description>POETIZE - 最美博客</description>
+    <name>LIULIUPI</name>
+    <description>LIULIUPI</description>
     <packaging>pom</packaging>
 
     <properties>
@@ -80,7 +80,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.ld</groupId>
+                <groupId>com.liuliupi</groupId>
                 <artifactId>poetry-web</artifactId>
                 <version>${poetry.version}</version>
             </dependency>
