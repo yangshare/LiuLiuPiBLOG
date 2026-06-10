@@ -17,7 +17,7 @@ public class ImConfigConst {
     /**
      * 协议名字
      */
-    public static final String PROTOCOL_NAME = "protocol_poetize";
+    public static final String PROTOCOL_NAME = "protocol_liuliupi";
 
     public static final String CHARSET = "UTF-8";
 

@@ -107,7 +107,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                     Label label = wrapper.select(Label::getLabelName).eq(Label::getId, articleVO.getLabelId()).one();
                     String text = getSubscribeMail(label.getLabelName(), articleVO.getArticleTitle());
                     WebInfo webInfo = (WebInfo) PoetryCache.get(CommonConst.WEB_INFO);
-                    mailUtil.sendMailMessage(emails, "您有一封来自" + (webInfo == null ? "POETIZE" : webInfo.getWebName()) + "的回执！", text);
+                    mailUtil.sendMailMessage(emails, "您有一封来自" + (webInfo == null ? "LIULIUPI" : webInfo.getWebName()) + "的回执！", text);
                 }
             }
         } catch (Exception e) {
@@ -118,7 +118,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     private String getSubscribeMail(String labelName, String articleTitle) {
         WebInfo webInfo = (WebInfo) PoetryCache.get(CommonConst.WEB_INFO);
-        String webName = (webInfo == null ? "POETIZE" : webInfo.getWebName());
+        String webName = (webInfo == null ? "LIULIUPI" : webInfo.getWebName());
         return String.format(mailUtil.getMailText(),
                 webName,
                 String.format(MailUtil.notificationMail, PoetryUtil.getAdminUser().getUsername()),

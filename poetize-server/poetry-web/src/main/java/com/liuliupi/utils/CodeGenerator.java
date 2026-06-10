@@ -80,7 +80,7 @@ public class CodeGenerator {
     private static DataSourceConfig saraDataSourceConfig() {
         return new DataSourceConfig()
                 .setDbType(DbType.MYSQL)
-                .setUrl("jdbc:mysql://ip:port/poetize?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai")
+                .setUrl("jdbc:mysql://ip:port/liuliupi?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai")
                 .setDriverName("com.mysql.cj.jdbc.Driver")
                 .setUsername("username")
                 .setPassword("password");

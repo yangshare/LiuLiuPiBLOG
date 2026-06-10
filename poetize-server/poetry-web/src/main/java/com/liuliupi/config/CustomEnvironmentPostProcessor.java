@@ -25,7 +25,7 @@ public class CustomEnvironmentPostProcessor implements EnvironmentPostProcessor 
 
     private static final String SOURCE_SQL = "select * from sys_config";
 
-    private static final String DATABASE = "poetize";
+    private static final String DATABASE = "liuliupi";
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {

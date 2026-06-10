@@ -312,7 +312,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
             AtomicInteger count = (AtomicInteger) PoetryCache.get(CommonConst.CODE_MAIL + mail.get(0));
             if (count == null || count.get() < CommonConst.CODE_MAIL_COUNT) {
-                mailUtil.sendMailMessage(mail, "您有一封来自" + (webInfo == null ? "POETIZE" : webInfo.getWebName()) + "的回执！", text);
+                mailUtil.sendMailMessage(mail, "您有一封来自" + (webInfo == null ? "LIULIUPI" : webInfo.getWebName()) + "的回执！", text);
                 if (count == null) {
                     PoetryCache.put(CommonConst.CODE_MAIL + mail.get(0), new AtomicInteger(1), CommonConst.CODE_EXPIRE);
                 } else {
@@ -340,7 +340,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
             AtomicInteger count = (AtomicInteger) PoetryCache.get(CommonConst.CODE_MAIL + mail.get(0));
             if (count == null || count.get() < CommonConst.CODE_MAIL_COUNT) {
-                mailUtil.sendMailMessage(mail, "您有一封来自" + (webInfo == null ? "POETIZE" : webInfo.getWebName()) + "的回执！", text);
+                mailUtil.sendMailMessage(mail, "您有一封来自" + (webInfo == null ? "LIULIUPI" : webInfo.getWebName()) + "的回执！", text);
                 if (count == null) {
                     PoetryCache.put(CommonConst.CODE_MAIL + mail.get(0), new AtomicInteger(1), CommonConst.CODE_EXPIRE);
                 } else {
@@ -430,7 +430,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
             AtomicInteger count = (AtomicInteger) PoetryCache.get(CommonConst.CODE_MAIL + mail.get(0));
             if (count == null || count.get() < CommonConst.CODE_MAIL_COUNT) {
-                mailUtil.sendMailMessage(mail, "您有一封来自" + (webInfo == null ? "POETIZE" : webInfo.getWebName()) + "的回执！", text);
+                mailUtil.sendMailMessage(mail, "您有一封来自" + (webInfo == null ? "LIULIUPI" : webInfo.getWebName()) + "的回执！", text);
                 if (count == null) {
                     PoetryCache.put(CommonConst.CODE_MAIL + mail.get(0), new AtomicInteger(1), CommonConst.CODE_EXPIRE);
                 } else {
@@ -594,7 +594,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private String getCodeMail(int i) {
         WebInfo webInfo = (WebInfo) PoetryCache.get(CommonConst.WEB_INFO);
-        String webName = (webInfo == null ? "POETIZE" : webInfo.getWebName());
+        String webName = (webInfo == null ? "LIULIUPI" : webInfo.getWebName());
         return String.format(mailUtil.getMailText(),
                 webName,
                 String.format(MailUtil.imMail, PoetryUtil.getAdminUser().getUsername()),
