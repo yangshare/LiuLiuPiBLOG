@@ -34,7 +34,7 @@
         let root = document.querySelector(":root");
         let webStaticResourcePrefix = sysConfig['webStaticResourcePrefix'];
         root.style.setProperty("--backgroundPicture", "url(" + webStaticResourcePrefix + "assets/backgroundPicture.jpg)");
-        const font = new FontFace("poetize-font", "url(" + webStaticResourcePrefix + "assets/font.woff2)");
+        const font = new FontFace("liuliupi-font", "url(" + webStaticResourcePrefix + "assets/font.woff2)");
         font.load();
         document.fonts.add(font);
       }

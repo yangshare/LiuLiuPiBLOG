@@ -438,7 +438,7 @@
         root.style.setProperty("--backgroundPicture", "url(" + webStaticResourcePrefix + "assets/backgroundPicture.jpg)");
         root.style.setProperty("--toolbar", "url(" + webStaticResourcePrefix + "assets/toolbar.jpg)");
         root.style.setProperty("--love", "url(" + webStaticResourcePrefix + "assets/love.jpg)");
-        const font = new FontFace("poetize-font", "url(" + webStaticResourcePrefix + "assets/font.woff2)");
+        const font = new FontFace("liuliupi-font", "url(" + webStaticResourcePrefix + "assets/font.woff2)");
         font.load();
         document.fonts.add(font);
       },
