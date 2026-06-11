@@ -1,0 +1,4 @@
+allowBuilds:
+  core-js: true
+  ejs: true
+  yorkie: true
