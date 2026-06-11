@@ -10,8 +10,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import java.sql.*;
@@ -25,7 +24,9 @@ public class CustomEnvironmentPostProcessor implements EnvironmentPostProcessor 
 
     private static final String SOURCE_SQL = "select * from sys_config";
 
-    private static final String DATABASE = "liuliupi";
+    private static final String DATABASE = "liuliupi_blog";
+
+    private static final String INIT_SCRIPT = "sql/liuliupi_blog.sql";
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
@@ -64,8 +65,7 @@ public class CustomEnvironmentPostProcessor implements EnvironmentPostProcessor 
             try (ResultSet resultSet = statement.executeQuery("SHOW DATABASES LIKE '" + DATABASE + "'")) {
                 if (!resultSet.next()) {
                     ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-                    ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-                    populator.addScripts(resolver.getResources("file:sql/liuliupi_blog.sql"));
+                    populator.addScript(new ClassPathResource(INIT_SCRIPT));
                     populator.populate(connection);
                 }
             }
