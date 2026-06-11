@@ -33,7 +33,7 @@
             <el-dropdown :hide-timeout="500" placement="bottom">
               <li>
                 <div class="my-menu">
-                  📒 <span>记录</span>
+                  📒 <span>分类</span>
                 </div>
               </li>
               <el-dropdown-menu slot="dropdown">
@@ -62,14 +62,14 @@
             <!-- 百宝箱 -->
             <li @click="$router.push({path: '/favorite'})">
               <div class="my-menu">
-                🧰 <span>百宝箱</span>
+                🔗 <span>友链</span>
               </div>
             </li>
 
             <!-- 留言 -->
             <li @click="$router.push({path: '/message'})">
               <div class="my-menu">
-                📪 <span>留言</span>
+                🌳 <span>树洞</span>
               </div>
             </li>
 
@@ -183,7 +183,7 @@
 
           <li>
             <div>
-              📒 <span>记录</span>
+              📒 <span>分类</span>
             </div>
             <div>
               <div v-for="(menu, index) in sortInfo"
@@ -212,14 +212,14 @@
           <!-- 百宝箱 -->
           <li @click="smallMenu({path: '/favorite'})">
             <div>
-              🧰 <span>百宝箱</span>
+              🔗 <span>友链</span>
             </div>
           </li>
 
           <!-- 留言 -->
           <li @click="smallMenu({path: '/message'})">
             <div>
-              📪 <span>留言</span>
+              🌳 <span>树洞</span>
             </div>
           </li>
 
