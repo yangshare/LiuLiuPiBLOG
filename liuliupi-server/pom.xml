@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.liuliupi</groupId>
-    <artifactId>liuliupi-web</artifactId>
+    <artifactId>liuliupi-server</artifactId>
     <version>2.0</version>
-    <name>LIULIUPI</name>
+    <name>liuliupi-server</name>
     <description>LIULIUPI</description>
     <packaging>jar</packaging>
 
