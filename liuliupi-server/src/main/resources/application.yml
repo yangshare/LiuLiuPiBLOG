@@ -39,8 +39,8 @@ spring:
 
   datasource:
     username: root
-    password: FsQE*D4Z^x6z@!
-    url: jdbc:mysql://192.168.6.3:3306/liuliupi?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    password: yang
+    url: jdbc:mysql://192.168.6.3:3308/liuliupi_blog?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
 

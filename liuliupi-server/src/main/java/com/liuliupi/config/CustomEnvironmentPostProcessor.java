@@ -65,7 +65,7 @@ public class CustomEnvironmentPostProcessor implements EnvironmentPostProcessor 
                 if (!resultSet.next()) {
                     ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
                     ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-                    populator.addScripts(resolver.getResources("file:/home/poetry.sql"));
+                    populator.addScripts(resolver.getResources("file:sql/liuliupi_blog.sql"));
                     populator.populate(connection);
                 }
             }

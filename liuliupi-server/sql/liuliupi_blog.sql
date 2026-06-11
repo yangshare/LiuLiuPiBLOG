@@ -1,11 +1,11 @@
-CREATE DATABASE IF NOT EXISTS liuliupi DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS liuliupi_blog DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 
 
-DROP TABLE IF EXISTS `liuliupi`.`user`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`user`;
 
-CREATE TABLE `liuliupi`.`user` (
+CREATE TABLE `liuliupi_blog`.`user` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `username` varchar(32) DEFAULT NULL COMMENT '用户名',
   `password` varchar(128) DEFAULT NULL COMMENT '密码',
@@ -29,9 +29,9 @@ CREATE TABLE `liuliupi`.`user` (
   UNIQUE KEY `uk_username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户信息表';
 
-DROP TABLE IF EXISTS `liuliupi`.`article`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`article`;
 
-CREATE TABLE `liuliupi`.`article` (
+CREATE TABLE `liuliupi_blog`.`article` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` int NOT NULL COMMENT '用户ID',
   `sort_id` int NOT NULL COMMENT '分类ID',
@@ -56,9 +56,9 @@ CREATE TABLE `liuliupi`.`article` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章表';
 
-DROP TABLE IF EXISTS `liuliupi`.`comment`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`comment`;
 
-CREATE TABLE `liuliupi`.`comment` (
+CREATE TABLE `liuliupi_blog`.`comment` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `source` int NOT NULL COMMENT '评论来源标识',
   `type` varchar(32) NOT NULL COMMENT '评论来源类型',
@@ -76,9 +76,9 @@ CREATE TABLE `liuliupi`.`comment` (
   KEY `source` (`source`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章评论表';
 
-DROP TABLE IF EXISTS `liuliupi`.`sort`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`sort`;
 
-CREATE TABLE `liuliupi`.`sort` (
+CREATE TABLE `liuliupi_blog`.`sort` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `sort_name` varchar(32) NOT NULL COMMENT '分类名称',
   `sort_description` varchar(256) NOT NULL COMMENT '分类描述',
@@ -88,9 +88,9 @@ CREATE TABLE `liuliupi`.`sort` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='分类';
 
-DROP TABLE IF EXISTS `liuliupi`.`label`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`label`;
 
-CREATE TABLE `liuliupi`.`label` (
+CREATE TABLE `liuliupi_blog`.`label` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `sort_id` int NOT NULL COMMENT '分类ID',
   `label_name` varchar(32) NOT NULL COMMENT '标签名称',
@@ -99,9 +99,9 @@ CREATE TABLE `liuliupi`.`label` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='标签';
 
-DROP TABLE IF EXISTS `liuliupi`.`tree_hole`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`tree_hole`;
 
-CREATE TABLE `liuliupi`.`tree_hole` (
+CREATE TABLE `liuliupi_blog`.`tree_hole` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `avatar` varchar(256) DEFAULT NULL COMMENT '头像',
   `message` varchar(64) NOT NULL COMMENT '留言',
@@ -111,9 +111,9 @@ CREATE TABLE `liuliupi`.`tree_hole` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='树洞';
 
-DROP TABLE IF EXISTS `liuliupi`.`wei_yan`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`wei_yan`;
 
-CREATE TABLE `liuliupi`.`wei_yan` (
+CREATE TABLE `liuliupi_blog`.`wei_yan` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` int NOT NULL COMMENT '用户ID',
   `like_count` int NOT NULL DEFAULT 0 COMMENT '点赞数',
@@ -128,9 +128,9 @@ CREATE TABLE `liuliupi`.`wei_yan` (
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='微言表';
 
-DROP TABLE IF EXISTS `liuliupi`.`web_info`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`web_info`;
 
-CREATE TABLE `liuliupi`.`web_info` (
+CREATE TABLE `liuliupi_blog`.`web_info` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `web_name` varchar(16) NOT NULL COMMENT '网站名称',
   `web_title` varchar(512) NOT NULL COMMENT '网站信息',
@@ -147,9 +147,9 @@ CREATE TABLE `liuliupi`.`web_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='网站信息表';
 
-DROP TABLE IF EXISTS `liuliupi`.`resource_path`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`resource_path`;
 
-CREATE TABLE `liuliupi`.`resource_path` (
+CREATE TABLE `liuliupi_blog`.`resource_path` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `title` varchar(64) NOT NULL COMMENT '标题',
   `classify` varchar(32) DEFAULT NULL COMMENT '分类',
@@ -165,9 +165,9 @@ CREATE TABLE `liuliupi`.`resource_path` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资源聚合';
 
-DROP TABLE IF EXISTS `liuliupi`.`resource`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`resource`;
 
-CREATE TABLE `liuliupi`.`resource` (
+CREATE TABLE `liuliupi_blog`.`resource` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` int NOT NULL COMMENT '用户ID',
   `type` varchar(32) NOT NULL COMMENT '资源类型',
@@ -183,9 +183,9 @@ CREATE TABLE `liuliupi`.`resource` (
   UNIQUE KEY `uk_path` (`path`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资源信息';
 
-DROP TABLE IF EXISTS `liuliupi`.`history_info`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`history_info`;
 
-CREATE TABLE `liuliupi`.`history_info` (
+CREATE TABLE `liuliupi_blog`.`history_info` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` int DEFAULT NULL COMMENT '用户ID',
   `ip` varchar(128) NOT NULL COMMENT 'ip',
@@ -196,9 +196,9 @@ CREATE TABLE `liuliupi`.`history_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='历史信息';
 
-DROP TABLE IF EXISTS `liuliupi`.`sys_config`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`sys_config`;
 
-CREATE TABLE `liuliupi`.`sys_config` (
+CREATE TABLE `liuliupi_blog`.`sys_config` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `config_name` varchar(128) NOT NULL COMMENT '名称',
   `config_key` varchar(64) NOT NULL COMMENT '键名',
@@ -207,9 +207,9 @@ CREATE TABLE `liuliupi`.`sys_config` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='参数配置表';
 
-DROP TABLE IF EXISTS `liuliupi`.`family`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`family`;
 
-CREATE TABLE `liuliupi`.`family` (
+CREATE TABLE `liuliupi_blog`.`family` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` int NOT NULL COMMENT '用户ID',
   `bg_cover` varchar(256) NOT NULL COMMENT '背景封面',
@@ -231,9 +231,9 @@ CREATE TABLE `liuliupi`.`family` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='家庭信息';
 
 
-DROP TABLE IF EXISTS `liuliupi`.`im_chat_user_friend`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`im_chat_user_friend`;
 
-CREATE TABLE `liuliupi`.`im_chat_user_friend` (
+CREATE TABLE `liuliupi_blog`.`im_chat_user_friend` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `user_id` int NOT NULL COMMENT '用户ID',
   `friend_id` int NOT NULL COMMENT '好友ID',
@@ -245,9 +245,9 @@ CREATE TABLE `liuliupi`.`im_chat_user_friend` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='好友';
 
-DROP TABLE IF EXISTS `liuliupi`.`im_chat_group`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`im_chat_group`;
 
-CREATE TABLE `liuliupi`.`im_chat_group` (
+CREATE TABLE `liuliupi_blog`.`im_chat_group` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `group_name` varchar(32) NOT NULL COMMENT '群名称',
   `master_user_id` int NOT NULL COMMENT '群主用户ID',
@@ -261,9 +261,9 @@ CREATE TABLE `liuliupi`.`im_chat_group` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='聊天群';
 
-DROP TABLE IF EXISTS `liuliupi`.`im_chat_group_user`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`im_chat_group_user`;
 
-CREATE TABLE `liuliupi`.`im_chat_group_user` (
+CREATE TABLE `liuliupi_blog`.`im_chat_group_user` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `group_id` int NOT NULL COMMENT '群ID',
   `user_id` int NOT NULL COMMENT '用户ID',
@@ -277,9 +277,9 @@ CREATE TABLE `liuliupi`.`im_chat_group_user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='聊天群成员';
 
-DROP TABLE IF EXISTS `liuliupi`.`im_chat_user_message`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`im_chat_user_message`;
 
-CREATE TABLE `liuliupi`.`im_chat_user_message` (
+CREATE TABLE `liuliupi_blog`.`im_chat_user_message` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `from_id` int NOT NULL COMMENT '发送ID',
   `to_id` int NOT NULL COMMENT '接收ID',
@@ -292,9 +292,9 @@ CREATE TABLE `liuliupi`.`im_chat_user_message` (
   KEY `union_index` (`to_id`,`message_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='单聊记录';
 
-DROP TABLE IF EXISTS `liuliupi`.`im_chat_user_group_message`;
+DROP TABLE IF EXISTS `liuliupi_blog`.`im_chat_user_group_message`;
 
-CREATE TABLE `liuliupi`.`im_chat_user_group_message` (
+CREATE TABLE `liuliupi_blog`.`im_chat_user_group_message` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `group_id` int NOT NULL COMMENT '群ID',
   `from_id` int NOT NULL COMMENT '发送ID',
@@ -309,33 +309,33 @@ CREATE TABLE `liuliupi`.`im_chat_user_group_message` (
 
 
 
-INSERT INTO `liuliupi`.`user`(`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`, `admire`, `subscribe`, `avatar`, `introduction`, `user_type`, `update_by`, `deleted`) VALUES (1, 'Sara', '47bce5c74f589f4867dbd57e9ca9f808', '', '', 1, 1, '', '', '', '', '', 0, 'Sara', 0);
+INSERT INTO `liuliupi_blog`.`user`(`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`, `admire`, `subscribe`, `avatar`, `introduction`, `user_type`, `update_by`, `deleted`) VALUES (1, 'Sara', '47bce5c74f589f4867dbd57e9ca9f808', '', '', 1, 1, '', '', '', '', '', 0, 'Sara', 0);
 
-INSERT INTO `liuliupi`.`web_info`(`id`, `web_name`, `web_title`, `notices`, `footer`, `background_image`, `avatar`, `random_avatar`, `random_name`, `random_cover`, `waifu_json`, `status`) VALUES (1, 'Sara', 'LIULIUPI', '[]', '云想衣裳花想容， 春风拂槛露华浓。', '', '', '[]', '[]', '[]', '{}', 1);
+INSERT INTO `liuliupi_blog`.`web_info`(`id`, `web_name`, `web_title`, `notices`, `footer`, `background_image`, `avatar`, `random_avatar`, `random_name`, `random_cover`, `waifu_json`, `status`) VALUES (1, 'Sara', 'LIULIUPI', '[]', '云想衣裳花想容， 春风拂槛露华浓。', '', '', '[]', '[]', '[]', '{}', 1);
 
-INSERT INTO `liuliupi`.`family` (`id`, `user_id`, `bg_cover`, `man_cover`, `woman_cover`, `man_name`, `woman_name`, `timing`, `countdown_title`, `countdown_time`, `status`, `family_info`, `like_count`, `create_time`, `update_time`) VALUES (1, 1, '背景封面', '男生头像', '女生头像', 'Sara', 'Abby', '2000-01-01 00:00:00', '春节倒计时', '2025-01-29 00:00:00', 1, '', 0, '2000-01-01 00:00:00', '2000-01-01 00:00:00');
+INSERT INTO `liuliupi_blog`.`family` (`id`, `user_id`, `bg_cover`, `man_cover`, `woman_cover`, `man_name`, `woman_name`, `timing`, `countdown_title`, `countdown_time`, `status`, `family_info`, `like_count`, `create_time`, `update_time`) VALUES (1, 1, '背景封面', '男生头像', '女生头像', 'Sara', 'Abby', '2000-01-01 00:00:00', '春节倒计时', '2025-01-29 00:00:00', 1, '', 0, '2000-01-01 00:00:00', '2000-01-01 00:00:00');
 
-INSERT INTO `liuliupi`.`im_chat_group` (`id`, `group_name`, `master_user_id`, `introduction`, `notice`, `in_type`) VALUES(-1, '公共聊天室', 1, '公共聊天室', '欢迎光临！', 0);
+INSERT INTO `liuliupi_blog`.`im_chat_group` (`id`, `group_name`, `master_user_id`, `introduction`, `notice`, `in_type`) VALUES(-1, '公共聊天室', 1, '公共聊天室', '欢迎光临！', 0);
 
-insert into `liuliupi`.`im_chat_group_user` (`id`, `group_id`, `user_id`, `admin_flag`, `user_status`) values(1, -1, 1, 1, 1);
-
-
+insert into `liuliupi_blog`.`im_chat_group_user` (`id`, `group_id`, `user_id`, `admin_flag`, `user_status`) values(1, -1, 1, 1, 1);
 
 
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (1, 'QQ邮箱号', 'spring.mail.username', '', '1');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (2, 'QQ邮箱授权码', 'spring.mail.password', '', '1');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (3, '邮箱验证码模板', 'user.code.format', '【LIULIUPI】%s为本次验证的验证码，请在5分钟内完成验证。为保证账号安全，请勿泄漏此验证码。', '1');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (4, '邮箱订阅模板', 'user.subscribe.format', '【LIULIUPI】您订阅的专栏【%s】新增一篇文章：%s。', '1');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (5, '默认存储平台', 'store.type', 'local', '2');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (6, '本地存储启用状态', 'local.enable', 'true', '2');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (7, '七牛云存储启用状态', 'qiniu.enable', 'false', '2');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (8, '本地存储上传文件根目录', 'local.uploadUrl', '/home/file/', '1');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (9, '本地存储下载前缀', 'local.downloadUrl', '仿照：【https://yangshare.com/static/】，将域名换成自己的服务器ip或域名', '2');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (10, '七牛云-accessKey', 'qiniu.accessKey', '', '1');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (11, '七牛云-secretKey', 'qiniu.secretKey', '', '1');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (12, '七牛云-bucket', 'qiniu.bucket', '', '1');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (13, '七牛云-域名', 'qiniu.downloadUrl', '仿照：【https://file.yangshare.com/】，将域名换成自己的七牛云ip或域名', '2');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (15, 'IM-聊天室启用状态', 'im.enable', 'true', '1');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (16, '七牛云上传地址', 'qiniuUrl', 'https://upload.qiniup.com', '2');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (17, '备案号', 'beian', '', '2');
-INSERT INTO `liuliupi`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (18, '前端静态资源路径前缀', 'webStaticResourcePrefix', '仿照：【https://yangshare.com/static/】', '2');
+
+
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (1, 'QQ邮箱号', 'spring.mail.username', '', '1');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (2, 'QQ邮箱授权码', 'spring.mail.password', '', '1');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (3, '邮箱验证码模板', 'user.code.format', '【LIULIUPI】%s为本次验证的验证码，请在5分钟内完成验证。为保证账号安全，请勿泄漏此验证码。', '1');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (4, '邮箱订阅模板', 'user.subscribe.format', '【LIULIUPI】您订阅的专栏【%s】新增一篇文章：%s。', '1');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (5, '默认存储平台', 'store.type', 'local', '2');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (6, '本地存储启用状态', 'local.enable', 'true', '2');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (7, '七牛云存储启用状态', 'qiniu.enable', 'false', '2');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (8, '本地存储上传文件根目录', 'local.uploadUrl', '/home/file/', '1');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (9, '本地存储下载前缀', 'local.downloadUrl', '仿照：【https://yangshare.com/static/】，将域名换成自己的服务器ip或域名', '2');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (10, '七牛云-accessKey', 'qiniu.accessKey', '', '1');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (11, '七牛云-secretKey', 'qiniu.secretKey', '', '1');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (12, '七牛云-bucket', 'qiniu.bucket', '', '1');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (13, '七牛云-域名', 'qiniu.downloadUrl', '仿照：【https://file.yangshare.com/】，将域名换成自己的七牛云ip或域名', '2');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (15, 'IM-聊天室启用状态', 'im.enable', 'true', '1');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (16, '七牛云上传地址', 'qiniuUrl', 'https://upload.qiniup.com', '2');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (17, '备案号', 'beian', '', '2');
+INSERT INTO `liuliupi_blog`.`sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`) VALUES (18, '前端静态资源路径前缀', 'webStaticResourcePrefix', '仿照：【https://yangshare.com/static/】', '2');
