@@ -60,15 +60,15 @@
 
         let user = {
           account: this.account.trim(),
-          password: this.$common.encrypt(this.password.trim()),
-          isAdmin: true
+          password: this.$common.encrypt(this.password.trim())
         };
 
-        this.$http.post(this.$constant.baseURL + "/user/login", user, true, false)
+        this.$http.post(this.$constant.baseURL + "/user/login", user, false)
           .then((res) => {
             if (!this.$common.isEmpty(res.data)) {
-              localStorage.setItem("adminToken", res.data.accessToken);
-              this.$store.commit("loadCurrentAdmin", res.data);
+              // 统一 Token 体系：使用 currentUser 和 userToken
+              localStorage.setItem("userToken", res.data.accessToken);
+              this.$store.commit("loadCurrentUser", res.data);
               this.account = "";
               this.password = "";
               this.$router.push({path: this.redirect});

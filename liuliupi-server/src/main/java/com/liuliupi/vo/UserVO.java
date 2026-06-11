@@ -42,6 +42,8 @@ public class UserVO {
 
     private Boolean isBoss = false;
 
+    private Integer userType;
+
     private String accessToken;
 
     private String code;

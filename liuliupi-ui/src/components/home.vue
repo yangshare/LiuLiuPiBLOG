@@ -80,8 +80,8 @@
               </div>
             </li>-->
 
-            <!-- 后台 -->
-            <li @click="goAdmin()">
+            <!-- 后台：仅站长和管理员可见 -->
+            <li v-if="!$common.isEmpty($store.state.currentUser) && $store.state.currentUser.userType <= 1" @click="goAdmin()">
               <div class="my-menu">
                 💻️ <span>后台</span>
               </div>
@@ -230,8 +230,8 @@
             </div>
           </li>
 
-          <!-- 后台 -->
-          <li @click="goAdmin()">
+          <!-- 后台：仅站长和管理员可见 -->
+          <li @click="goAdmin()" v-if="!$common.isEmpty($store.state.currentUser) && $store.state.currentUser.userType <= 1">
             <div>
               💻️ <span>后台</span>
             </div>

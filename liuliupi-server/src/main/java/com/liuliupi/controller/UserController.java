@@ -42,12 +42,12 @@ public class UserController {
 
     /**
      * 用户名、邮箱、手机号/密码登录
+     * 统一 Token 体系，不再区分前台/后台
      */
     @PostMapping("/login")
     public PoetryResult<UserVO> login(@RequestParam("account") String account,
-                                      @RequestParam("password") String password,
-                                      @RequestParam(value = "isAdmin", defaultValue = "false") Boolean isAdmin) {
-        return userService.login(account, password, isAdmin);
+                                      @RequestParam("password") String password) {
+        return userService.login(account, password);
     }
 
 

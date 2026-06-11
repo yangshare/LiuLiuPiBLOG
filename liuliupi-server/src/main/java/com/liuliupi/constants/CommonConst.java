@@ -9,24 +9,56 @@ public class CommonConst {
     public static final int ADMIN_USER_ID = 1;
 
     /**
-     * 根据用户ID获取Token
+     * 根据用户ID获取Token（统一版）
      */
+    public static final String TOKEN = "token_";
+
+    /**
+     * 根据用户ID获取Token续期间隔（统一版）
+     */
+    public static final String TOKEN_INTERVAL_KEY = "token_interval_";
+
+    /**
+     * Token 前缀（统一版）
+     */
+    public static final String ACCESS_TOKEN = "access_token_";
+
+    // === 以下为废弃常量，保留以避免编译报错 ===
+
+    /**
+     * @deprecated 使用 {@link #TOKEN} 替代
+     */
+    @Deprecated
     public static final String USER_TOKEN = "user_token_";
 
+    /**
+     * @deprecated 使用 {@link #TOKEN} 替代
+     */
+    @Deprecated
     public static final String ADMIN_TOKEN = "admin_token_";
 
     /**
-     * 根据用户ID获取Token
+     * @deprecated 使用 {@link #TOKEN_INTERVAL_KEY} 替代
      */
+    @Deprecated
     public static final String USER_TOKEN_INTERVAL = "user_token_interval_";
 
+    /**
+     * @deprecated 使用 {@link #TOKEN_INTERVAL_KEY} 替代
+     */
+    @Deprecated
     public static final String ADMIN_TOKEN_INTERVAL = "admin_token_interval_";
 
     /**
-     * Token
+     * @deprecated 使用 {@link #ACCESS_TOKEN} 替代
      */
+    @Deprecated
     public static final String USER_ACCESS_TOKEN = "user_access_token_";
 
+    /**
+     * @deprecated 使用 {@link #ACCESS_TOKEN} 替代
+     */
+    @Deprecated
     public static final String ADMIN_ACCESS_TOKEN = "admin_access_token_";
 
     public static final String TOKEN_HEADER = "Authorization";

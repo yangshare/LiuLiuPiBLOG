@@ -206,7 +206,7 @@ export default {
   /**
    * 保存资源
    */
-  saveResource(that, type, path, size, mimeType, originalName, storeType, isAdmin = false) {
+  saveResource(that, type, path, size, mimeType, originalName, storeType) {
     let resource = {
       type: type,
       path: path,
@@ -216,7 +216,7 @@ export default {
       originalName: originalName
     };
 
-    that.$http.post(that.$constant.baseURL + "/resource/saveResource", resource, isAdmin)
+    that.$http.post(that.$constant.baseURL + "/resource/saveResource", resource)
       .catch((error) => {
         that.$message({
           message: error.message,

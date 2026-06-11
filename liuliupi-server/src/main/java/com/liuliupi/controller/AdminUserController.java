@@ -98,22 +98,22 @@ public class AdminUserController {
         return PoetryResult.success();
     }
 
+    /**
+     * 登出用户（清除 Token + 断开 WebSocket）
+     * 统一 Token 体系后，只需清除一套 Token
+     */
     private void logout(Integer userId) {
-        if (PoetryCache.get(CommonConst.ADMIN_TOKEN + userId) != null) {
-            String token = (String) PoetryCache.get(CommonConst.ADMIN_TOKEN + userId);
-            PoetryCache.remove(CommonConst.ADMIN_TOKEN + userId);
+        // 清除统一 Token
+        if (PoetryCache.get(CommonConst.TOKEN + userId) != null) {
+            String token = (String) PoetryCache.get(CommonConst.TOKEN + userId);
+            PoetryCache.remove(CommonConst.TOKEN + userId);
             PoetryCache.remove(token);
         }
 
-        if (PoetryCache.get(CommonConst.USER_TOKEN + userId) != null) {
-            String token = (String) PoetryCache.get(CommonConst.USER_TOKEN + userId);
-            PoetryCache.remove(CommonConst.USER_TOKEN + userId);
-            PoetryCache.remove(token);
-        }
+        // 断开 WebSocket 连接
         TioWebsocketStarter tioWebsocketStarter = TioUtil.getTio();
         if (tioWebsocketStarter != null) {
             Tio.removeUser(tioWebsocketStarter.getServerTioConfig(), String.valueOf(userId), "remove user");
         }
-
     }
 }

@@ -71,7 +71,7 @@
                     :src="article.articleCover"
                     fit="cover"></el-image>
         </div>
-        <uploadPicture :isAdmin="true" :prefix="'articleCover'" style="margin-top: 10px" @addPicture="addArticleCover"
+        <uploadPicture prefix="articleCover" style="margin-top: 10px" @addPicture="addArticleCover"
                        :maxSize="2"
                        :maxNumber="1"></uploadPicture>
       </el-form-item>
@@ -185,7 +185,7 @@
         if (file.name.lastIndexOf('.') !== -1) {
           suffix = file.name.substring(file.name.lastIndexOf('.'));
         }
-        let key = "articlePicture" + "/" + this.$store.state.currentAdmin.username.replace(/[^a-zA-Z]/g, '') + this.$store.state.currentAdmin.id + new Date().getTime() + Math.floor(Math.random() * 1000) + suffix;
+        let key = "articlePicture" + "/" + this.$store.state.currentUser.username.replace(/[^a-zA-Z]/g, '') + this.$store.state.currentUser.id + new Date().getTime() + Math.floor(Math.random() * 1000) + suffix;
 
         let storeType = localStorage.getItem("defaultStoreType");
 

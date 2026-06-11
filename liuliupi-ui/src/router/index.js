@@ -134,7 +134,11 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!Boolean(localStorage.getItem("adminToken"))) {
+    // 统一 Token 体系：检查 currentUser 是否存在且 userType <= 1（站长或管理员）
+    const currentUser = JSON.parse(localStorage.getItem("currentUser") || '{}');
+    const hasPermission = currentUser && currentUser.userType !== undefined && currentUser.userType <= 1;
+
+    if (!hasPermission) {
       next({
         path: '/verify',
         query: {redirect: to.fullPath}

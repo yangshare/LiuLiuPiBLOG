@@ -1,13 +1,11 @@
 package com.liuliupi.aop;
 
-import com.liuliupi.config.PoetryResult;
 import com.liuliupi.constants.CommonConst;
 import com.liuliupi.entity.User;
 import com.liuliupi.enums.CodeMsg;
-import com.liuliupi.enums.PoetryEnum;
 import com.liuliupi.handle.PoetryLoginException;
 import com.liuliupi.handle.PoetryRuntimeException;
-import com.liuliupi.utils.*;
+import com.liuliupi.utils.PoetryUtil;
 import com.liuliupi.utils.cache.PoetryCache;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -37,53 +35,28 @@ public class LoginCheckAspect {
             throw new PoetryLoginException(CodeMsg.LOGIN_EXPIRED.getMsg());
         }
 
-        if (token.contains(CommonConst.USER_ACCESS_TOKEN)) {
-            if (loginCheck.value() == PoetryEnum.USER_TYPE_ADMIN.getCode() || loginCheck.value() == PoetryEnum.USER_TYPE_DEV.getCode()) {
-                return PoetryResult.fail("请输入管理员账号！");
-            }
-        } else if (token.contains(CommonConst.ADMIN_ACCESS_TOKEN)) {
-            log.info("请求IP：" + PoetryUtil.getIpAddr(PoetryUtil.getRequest()));
-            if (loginCheck.value() == PoetryEnum.USER_TYPE_ADMIN.getCode() && user.getId().intValue() != CommonConst.ADMIN_USER_ID) {
-                return PoetryResult.fail("请输入管理员账号！");
-            }
-        } else {
-            throw new PoetryLoginException(CodeMsg.NOT_LOGIN.getMsg());
-        }
-
+        // 统一权限判断：直接使用 userType
+        // loginCheck.value() 表示所需的最低权限级别（0=站长, 1=管理员, 2=普通用户）
+        // userType 值越小权限越高：0 < 1 < 2
         if (loginCheck.value() < user.getUserType()) {
             throw new PoetryRuntimeException("权限不足！");
         }
 
-        //重置过期时间
+        // 重置过期时间（统一使用一套 key）
         String userId = user.getId().toString();
-        boolean flag1 = false;
-        if (token.contains(CommonConst.USER_ACCESS_TOKEN)) {
-            flag1 = PoetryCache.get(CommonConst.USER_TOKEN_INTERVAL + userId) == null;
-        } else if (token.contains(CommonConst.ADMIN_ACCESS_TOKEN)) {
-            flag1 = PoetryCache.get(CommonConst.ADMIN_TOKEN_INTERVAL + userId) == null;
-        }
+        boolean needRefresh = PoetryCache.get(CommonConst.TOKEN_INTERVAL_KEY + userId) == null;
 
-        if (flag1) {
+        if (needRefresh) {
             synchronized (userId.intern()) {
-                boolean flag2 = false;
-                if (token.contains(CommonConst.USER_ACCESS_TOKEN)) {
-                    flag2 = PoetryCache.get(CommonConst.USER_TOKEN_INTERVAL + userId) == null;
-                } else if (token.contains(CommonConst.ADMIN_ACCESS_TOKEN)) {
-                    flag2 = PoetryCache.get(CommonConst.ADMIN_TOKEN_INTERVAL + userId) == null;
-                }
-
-                if (flag2) {
+                // 双重检查
+                if (PoetryCache.get(CommonConst.TOKEN_INTERVAL_KEY + userId) == null) {
                     PoetryCache.put(token, user, CommonConst.TOKEN_EXPIRE);
-                    if (token.contains(CommonConst.USER_ACCESS_TOKEN)) {
-                        PoetryCache.put(CommonConst.USER_TOKEN + userId, token, CommonConst.TOKEN_EXPIRE);
-                        PoetryCache.put(CommonConst.USER_TOKEN_INTERVAL + userId, token, CommonConst.TOKEN_INTERVAL);
-                    } else if (token.contains(CommonConst.ADMIN_ACCESS_TOKEN)) {
-                        PoetryCache.put(CommonConst.ADMIN_TOKEN + userId, token, CommonConst.TOKEN_EXPIRE);
-                        PoetryCache.put(CommonConst.ADMIN_TOKEN_INTERVAL + userId, token, CommonConst.TOKEN_INTERVAL);
-                    }
+                    PoetryCache.put(CommonConst.TOKEN + userId, token, CommonConst.TOKEN_EXPIRE);
+                    PoetryCache.put(CommonConst.TOKEN_INTERVAL_KEY + userId, token, CommonConst.TOKEN_INTERVAL);
                 }
             }
         }
+
         return joinPoint.proceed();
     }
 }

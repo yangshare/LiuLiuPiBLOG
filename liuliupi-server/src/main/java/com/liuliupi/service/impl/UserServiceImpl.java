@@ -73,7 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private String codeFormat;
 
     @Override
-    public PoetryResult<UserVO> login(String account, String password, Boolean isAdmin) {
+    public PoetryResult<UserVO> login(String account, String password) {
         password = new String(SecureUtil.aes(CommonConst.CRYPOTJS_KEY.getBytes(StandardCharsets.UTF_8)).decrypt(password));
 
         User one = lambdaQuery().and(wrapper -> wrapper
@@ -93,48 +93,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return PoetryResult.fail("账号被冻结！");
         }
 
-        String adminToken = "";
-        String userToken = "";
-
-        if (isAdmin) {
-            if (one.getUserType() != PoetryEnum.USER_TYPE_ADMIN.getCode() && one.getUserType() != PoetryEnum.USER_TYPE_DEV.getCode()) {
-                return PoetryResult.fail("请输入管理员账号！");
-            }
-            if (PoetryCache.get(CommonConst.ADMIN_TOKEN + one.getId()) != null) {
-                adminToken = (String) PoetryCache.get(CommonConst.ADMIN_TOKEN + one.getId());
-            }
-        } else {
-            if (PoetryCache.get(CommonConst.USER_TOKEN + one.getId()) != null) {
-                userToken = (String) PoetryCache.get(CommonConst.USER_TOKEN + one.getId());
-            }
+        // 统一 Token 体系：检查是否已有 Token
+        String accessToken = "";
+        if (PoetryCache.get(CommonConst.TOKEN + one.getId()) != null) {
+            accessToken = (String) PoetryCache.get(CommonConst.TOKEN + one.getId());
         }
 
-
-        if (isAdmin && !StringUtils.hasText(adminToken)) {
+        // 如果没有 Token，生成新的
+        if (!StringUtils.hasText(accessToken)) {
             String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-            adminToken = CommonConst.ADMIN_ACCESS_TOKEN + uuid;
-            PoetryCache.put(adminToken, one, CommonConst.TOKEN_EXPIRE);
-            PoetryCache.put(CommonConst.ADMIN_TOKEN + one.getId(), adminToken, CommonConst.TOKEN_EXPIRE);
-        } else if (!isAdmin && !StringUtils.hasText(userToken)) {
-            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-            userToken = CommonConst.USER_ACCESS_TOKEN + uuid;
-            PoetryCache.put(userToken, one, CommonConst.TOKEN_EXPIRE);
-            PoetryCache.put(CommonConst.USER_TOKEN + one.getId(), userToken, CommonConst.TOKEN_EXPIRE);
+            accessToken = CommonConst.ACCESS_TOKEN + uuid;
+            PoetryCache.put(accessToken, one, CommonConst.TOKEN_EXPIRE);
+            PoetryCache.put(CommonConst.TOKEN + one.getId(), accessToken, CommonConst.TOKEN_EXPIRE);
         }
 
-
+        // 构建返回的 UserVO
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(one, userVO);
         userVO.setPassword(null);
-        if (isAdmin && one.getUserType() == PoetryEnum.USER_TYPE_ADMIN.getCode()) {
+        userVO.setUserType(one.getUserType());
+
+        // userType == 0 时为站长（Boss）
+        if (one.getUserType() == PoetryEnum.USER_TYPE_ADMIN.getCode()) {
             userVO.setIsBoss(true);
         }
 
-        if (isAdmin) {
-            userVO.setAccessToken(adminToken);
-        } else {
-            userVO.setAccessToken(userToken);
-        }
+        userVO.setAccessToken(accessToken);
         return PoetryResult.success(userVO);
     }
 
@@ -142,16 +126,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public PoetryResult exit() {
         String token = PoetryUtil.getToken();
         Integer userId = PoetryUtil.getUserId();
-        if (token.contains(CommonConst.USER_ACCESS_TOKEN)) {
-            PoetryCache.remove(CommonConst.USER_TOKEN + userId);
-            TioWebsocketStarter tioWebsocketStarter = TioUtil.getTio();
-            if (tioWebsocketStarter != null) {
-                Tio.removeUser(tioWebsocketStarter.getServerTioConfig(), String.valueOf(userId), "remove user");
-            }
-        } else if (token.contains(CommonConst.ADMIN_ACCESS_TOKEN)) {
-            PoetryCache.remove(CommonConst.ADMIN_TOKEN + userId);
-        }
+
+        // 统一 Token 体系：只需清除一套 Token
+        PoetryCache.remove(CommonConst.TOKEN + userId);
         PoetryCache.remove(token);
+
+        // 断开 WebSocket 连接
+        TioWebsocketStarter tioWebsocketStarter = TioUtil.getTio();
+        if (tioWebsocketStarter != null) {
+            Tio.removeUser(tioWebsocketStarter.getServerTioConfig(), String.valueOf(userId), "remove user");
+        }
+
         return PoetryResult.success();
     }
 
@@ -215,9 +200,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         User one = lambdaQuery().eq(User::getId, u.getId()).one();
 
-        String userToken = CommonConst.USER_ACCESS_TOKEN + UUID.randomUUID().toString().replaceAll("-", "");
+        // 统一 Token 体系
+        String userToken = CommonConst.ACCESS_TOKEN + UUID.randomUUID().toString().replaceAll("-", "");
         PoetryCache.put(userToken, one, CommonConst.TOKEN_EXPIRE);
-        PoetryCache.put(CommonConst.USER_TOKEN + one.getId(), userToken, CommonConst.TOKEN_EXPIRE);
+        PoetryCache.put(CommonConst.TOKEN + one.getId(), userToken, CommonConst.TOKEN_EXPIRE);
 
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(one, userVO);
@@ -279,7 +265,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         updateById(u);
         User one = lambdaQuery().eq(User::getId, u.getId()).one();
         PoetryCache.put(PoetryUtil.getToken(), one, CommonConst.TOKEN_EXPIRE);
-        PoetryCache.put(CommonConst.USER_TOKEN + one.getId(), PoetryUtil.getToken(), CommonConst.TOKEN_EXPIRE);
+        PoetryCache.put(CommonConst.TOKEN + one.getId(), PoetryUtil.getToken(), CommonConst.TOKEN_EXPIRE);
 
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(one, userVO);
@@ -407,7 +393,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         User one = lambdaQuery().eq(User::getId, user.getId()).one();
         PoetryCache.put(PoetryUtil.getToken(), one, CommonConst.TOKEN_EXPIRE);
-        PoetryCache.put(CommonConst.USER_TOKEN + one.getId(), PoetryUtil.getToken(), CommonConst.TOKEN_EXPIRE);
+        PoetryCache.put(CommonConst.TOKEN + one.getId(), PoetryUtil.getToken(), CommonConst.TOKEN_EXPIRE);
 
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(one, userVO);

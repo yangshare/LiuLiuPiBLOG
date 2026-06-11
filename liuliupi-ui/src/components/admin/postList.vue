@@ -94,7 +94,7 @@
   export default {
     data() {
       return {
-        isBoss: this.$store.state.currentAdmin.isBoss,
+        isBoss: this.$store.state.currentUser.isBoss,
         pagination: {
           current: 1,
           size: 10,

@@ -27,7 +27,7 @@
       <div class="header-user-con">
         <el-dropdown placement="bottom">
           <el-avatar class="user-avatar" :size="40"
-                     :src="$store.state.currentAdmin.avatar">
+                     :src="$store.state.currentUser.avatar">
           </el-avatar>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="logout()">退出</el-dropdown-item>
@@ -58,7 +58,7 @@
 
     methods: {
       logout() {
-        this.$http.get(this.$constant.baseURL + "/user/logout", {}, true)
+        this.$http.get(this.$constant.baseURL + "/user/logout")
           .then((res) => {
           })
           .catch((error) => {
@@ -67,8 +67,8 @@
               type: "error"
             });
           });
-        this.$store.commit("loadCurrentAdmin", {});
-        localStorage.removeItem("adminToken");
+        this.$store.commit("loadCurrentUser", {});
+        localStorage.removeItem("userToken");
         this.$router.push({path: '/'});
       }
     }

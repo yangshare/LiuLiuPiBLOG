@@ -100,7 +100,7 @@
             </el-option>
           </el-select>
         </div>
-        <uploadPicture :isAdmin="true" :prefix="pagination.resourceType" @addPicture="addFile"
+        <uploadPicture :prefix="pagination.resourceType" @addPicture="addFile"
                        :storeType="storeType"
                        :listType="'text'" :accept="'image/*, video/*, audio/*'"
                        :maxSize="100" :maxNumber="10"></uploadPicture>

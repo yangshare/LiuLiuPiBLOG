@@ -27,8 +27,6 @@ axios.interceptors.response.use(function (response) {
     if (response.data.code === 300) {
       store.commit("loadCurrentUser", {});
       localStorage.removeItem("userToken");
-      store.commit("loadCurrentAdmin", {});
-      localStorage.removeItem("adminToken");
       window.location.href = constant.webURL + "/user";
     }
     return Promise.reject(new Error(response.data.message));
@@ -46,17 +44,10 @@ axios.interceptors.response.use(function (response) {
 
 
 export default {
-  post(url, params = {}, isAdmin = false, json = true) {
-    let config;
-    if (isAdmin) {
-      config = {
-        headers: {"Authorization": localStorage.getItem("adminToken")}
-      };
-    } else {
-      config = {
-        headers: {"Authorization": localStorage.getItem("userToken")}
-      };
-    }
+  post(url, params = {}, json = true) {
+    let config = {
+      headers: {"Authorization": localStorage.getItem("userToken")}
+    };
 
     return new Promise((resolve, reject) => {
       axios
@@ -70,13 +61,8 @@ export default {
     });
   },
 
-  get(url, params = {}, isAdmin = false) {
-    let headers;
-    if (isAdmin) {
-      headers = {"Authorization": localStorage.getItem("adminToken")};
-    } else {
-      headers = {"Authorization": localStorage.getItem("userToken")};
-    }
+  get(url, params = {}) {
+    let headers = {"Authorization": localStorage.getItem("userToken")};
 
     return new Promise((resolve, reject) => {
       axios.get(url, {
@@ -90,19 +76,11 @@ export default {
     });
   },
 
-  upload(url, param, isAdmin = false, option) {
-    let config;
-    if (isAdmin) {
-      config = {
-        headers: {"Authorization": localStorage.getItem("adminToken"), "Content-Type": "multipart/form-data"},
-        timeout: 60000
-      };
-    } else {
-      config = {
-        headers: {"Authorization": localStorage.getItem("userToken"), "Content-Type": "multipart/form-data"},
-        timeout: 60000
-      };
-    }
+  upload(url, param, option) {
+    let config = {
+      headers: {"Authorization": localStorage.getItem("userToken"), "Content-Type": "multipart/form-data"},
+      timeout: 60000
+    };
     if (typeof option !== "undefined") {
       config.onUploadProgress = progressEvent => {
         if (progressEvent.total > 0) {

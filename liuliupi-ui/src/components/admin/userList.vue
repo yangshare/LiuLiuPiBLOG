@@ -32,7 +32,7 @@
                     disable-transitions>
               {{scope.row.userStatus === false ? '禁用' : '启用'}}
             </el-tag>
-            <el-switch v-if="scope.row.id !== $store.state.currentAdmin.id" @click.native="changeUserStatus(scope.row)" v-model="scope.row.userStatus"></el-switch>
+            <el-switch v-if="scope.row.id !== $store.state.currentUser.id" @click.native="changeUserStatus(scope.row)" v-model="scope.row.userStatus"></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="头像" align="center">

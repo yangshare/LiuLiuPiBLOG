@@ -51,7 +51,7 @@
     data() {
       return {
         isCollapse: true,
-        isBoss: this.$store.state.currentAdmin.isBoss,
+        isBoss: this.$store.state.currentUser.isBoss,
         items: [{
           icon: "el-icon-s-home",
           index: "/main",

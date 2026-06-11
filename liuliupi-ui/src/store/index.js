@@ -8,7 +8,6 @@ export default new Vuex.Store({
     toolbar: JSON.parse(localStorage.getItem("toolbar") || '{"visible": false, "enter": true}'),
     sortInfo: JSON.parse(localStorage.getItem("sortInfo") || '[]'),
     currentUser: JSON.parse(localStorage.getItem("currentUser") || '{}'),
-    currentAdmin: JSON.parse(localStorage.getItem("currentAdmin") || '{}'),
     sysConfig: JSON.parse(localStorage.getItem("sysConfig") || '{}'),
     webInfo: JSON.parse(localStorage.getItem("webInfo") || '{"webName": "", "webTitle": [], "notices": [], "randomCover": [], "footer": "", "backgroundImage": "", "avatar": ""}')
   },
@@ -56,10 +55,6 @@ export default new Vuex.Store({
     loadSysConfig(state, sysConfig) {
       state.sysConfig = sysConfig;
       localStorage.setItem("sysConfig", JSON.stringify(sysConfig));
-    },
-    loadCurrentAdmin(state, user) {
-      state.currentAdmin = user;
-      localStorage.setItem("currentAdmin", JSON.stringify(user));
     },
     loadWebInfo(state, webInfo) {
       webInfo.webTitle = webInfo.webTitle.split('');
