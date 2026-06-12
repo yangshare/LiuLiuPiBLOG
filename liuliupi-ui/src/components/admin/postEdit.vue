@@ -204,7 +204,7 @@
         }
       },
       saveLocal(pos, fd) {
-        this.$http.upload(this.$constant.baseURL + "/resource/upload", fd, true)
+        this.$http.upload(this.$constant.baseURL + "/resource/upload", fd)
           .then((res) => {
             if (!this.$common.isEmpty(res.data)) {
               let url = res.data;

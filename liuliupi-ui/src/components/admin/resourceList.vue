@@ -154,7 +154,7 @@
           type: 'success',
           center: true
         }).then(() => {
-          this.$http.post(this.$constant.baseURL + "/resource/deleteResource", {path: item.path}, true, false)
+          this.$http.post(this.$constant.baseURL + "/resource/deleteResource", {path: item.path}, false)
             .then((res) => {
               this.pagination.current = 1;
               this.getResources();

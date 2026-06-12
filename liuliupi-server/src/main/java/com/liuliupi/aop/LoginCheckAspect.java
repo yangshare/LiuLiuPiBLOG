@@ -29,6 +29,10 @@ public class LoginCheckAspect {
             throw new PoetryLoginException(CodeMsg.NOT_LOGIN.getMsg());
         }
 
+        if (!token.startsWith(CommonConst.ACCESS_TOKEN)) {
+            throw new PoetryLoginException(CodeMsg.NOT_LOGIN.getMsg());
+        }
+
         User user = (User) PoetryCache.get(token);
 
         if (user == null) {
