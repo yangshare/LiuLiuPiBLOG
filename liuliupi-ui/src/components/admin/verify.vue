@@ -14,6 +14,11 @@
           <template slot="prepend">密码</template>
         </el-input>
       </div>
+      <div class="captcha-row">
+        <el-input v-model="captchaCode" placeholder="验证码" class="captcha-input"></el-input>
+        <img :src="captchaImage" @click="getCaptcha()"
+             class="captcha-img" alt="验证码" title="点击刷新">
+      </div>
       <div>
         <proButton :info="'提交'"
                    @click.native="login()"
@@ -36,7 +41,10 @@
       return {
         redirect: this.$route.query.redirect,
         account: "",
-        password: ""
+        password: "",
+        captchaToken: "",
+        captchaImage: "",
+        captchaCode: ""
       }
     },
     computed: {},
@@ -47,8 +55,24 @@
         let webStaticResourcePrefix = sysConfig['webStaticResourcePrefix'];
         root.style.setProperty("--backgroundPicture", "url(" + webStaticResourcePrefix + "assets/backgroundPicture.jpg)");
       }
+      this.getCaptcha();
     },
     methods: {
+      getCaptcha() {
+        this.$http.get(this.$constant.baseURL + "/user/captcha")
+          .then((res) => {
+            if (!this.$common.isEmpty(res.data)) {
+              this.captchaToken = res.data.captchaToken;
+              this.captchaImage = res.data.image;
+            }
+          })
+          .catch((error) => {
+            this.$message({
+              message: error.message,
+              type: "error"
+            });
+          });
+      },
       login() {
         if (this.$common.isEmpty(this.account) || this.$common.isEmpty(this.password)) {
           this.$message({
@@ -58,9 +82,19 @@
           return;
         }
 
+        if (this.$common.isEmpty(this.captchaCode)) {
+          this.$message({
+            message: "请输入验证码！",
+            type: "error"
+          });
+          return;
+        }
+
         let user = {
           account: this.account.trim(),
-          password: this.$common.encrypt(this.password.trim())
+          password: this.$common.encrypt(this.password.trim()),
+          captchaToken: this.captchaToken,
+          code: this.captchaCode.trim()
         };
 
         this.$http.post(this.$constant.baseURL + "/user/login", user, false)
@@ -71,6 +105,7 @@
               this.$store.commit("loadCurrentUser", res.data);
               this.account = "";
               this.password = "";
+              this.captchaCode = "";
               this.$router.push({path: this.redirect});
             }
           })
@@ -79,6 +114,9 @@
               message: error.message,
               type: "error"
             });
+            // 验证码已被一次性消费，刷新图片并清空输入
+            this.captchaCode = "";
+            this.getCaptcha();
           });
       }
     }
@@ -111,6 +149,23 @@
 
   .verify-content > div:last-child > div {
     margin: 0 auto;
+  }
+
+  .captcha-row {
+    display: flex;
+    align-items: center;
+  }
+
+  .captcha-input {
+    flex: 1;
+  }
+
+  .captcha-img {
+    width: 120px;
+    height: 40px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 4px;
   }
 
 </style>
