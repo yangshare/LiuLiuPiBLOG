@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.liuliupi.config.PoetryResult;
 import com.liuliupi.entity.User;
 import com.liuliupi.vo.BaseRequestVO;
+import com.liuliupi.vo.CaptchaVO;
 import com.liuliupi.vo.UserVO;
 
 import java.util.List;
@@ -28,6 +29,13 @@ public interface UserService extends IService<User> {
      * @return 用户信息（含 Token）
      */
     PoetryResult<UserVO> login(String account, String password);
+
+    /**
+     * 生成图形验证码（公开接口，无需登录）
+     *
+     * @return 含 captchaToken 与 base64 图片的 VO
+     */
+    PoetryResult<CaptchaVO> captcha();
 
     PoetryResult exit();
 

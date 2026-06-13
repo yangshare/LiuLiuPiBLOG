@@ -8,6 +8,7 @@ import com.liuliupi.service.UserService;
 import com.liuliupi.constants.CommonConst;
 import com.liuliupi.utils.cache.PoetryCache;
 import com.liuliupi.utils.PoetryUtil;
+import com.liuliupi.vo.CaptchaVO;
 import com.liuliupi.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -37,6 +38,15 @@ public class UserController {
     @PostMapping("/regist")
     public PoetryResult<UserVO> regist(@Validated @RequestBody UserVO user) {
         return userService.regist(user);
+    }
+
+
+    /**
+     * 获取图形验证码（公开接口，进入登录页即可调用，无需登录）
+     */
+    @GetMapping("/captcha")
+    public PoetryResult<CaptchaVO> captcha() {
+        return userService.captcha();
     }
 
 

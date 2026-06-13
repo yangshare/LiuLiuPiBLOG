@@ -54,6 +54,16 @@ public class CommonConst {
     public static final long CODE_EXPIRE = 86400;
 
     /**
+     * 图形验证码缓存 key 前缀
+     */
+    public static final String CAPTCHA_KEY = "captcha_";
+
+    /**
+     * 图形验证码过期时间：5 分钟（单位：秒）
+     */
+    public static final long CAPTCHA_EXPIRE = 300;
+
+    /**
      * Token重设过期时间间隔：1小时
      */
     public static final long TOKEN_INTERVAL = 3600;

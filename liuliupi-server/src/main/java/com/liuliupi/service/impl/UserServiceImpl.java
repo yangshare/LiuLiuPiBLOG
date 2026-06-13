@@ -1,5 +1,7 @@
 package com.liuliupi.service.impl;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -26,6 +28,7 @@ import com.liuliupi.utils.*;
 import com.liuliupi.utils.cache.PoetryCache;
 import com.liuliupi.utils.mail.MailUtil;
 import com.liuliupi.vo.BaseRequestVO;
+import com.liuliupi.vo.CaptchaVO;
 import com.liuliupi.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -120,6 +123,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         userVO.setAccessToken(accessToken);
         return PoetryResult.success(userVO);
+    }
+
+    @Override
+    public PoetryResult<CaptchaVO> captcha() {
+        // 1. 生成线段干扰验证码：宽200 高70，4 位字符，30 条干扰线
+        LineCaptcha captcha = CaptchaUtil.createLineCaptcha(200, 70, 4, 30);
+        String code = captcha.getCode();
+        // 2. 生成 token，作为缓存 key 后缀与登录回传凭据
+        String captchaToken = UUID.randomUUID().toString().replaceAll("-", "");
+        // 3. 写入缓存，5 分钟过期
+        PoetryCache.put(CommonConst.CAPTCHA_KEY + captchaToken, code, CommonConst.CAPTCHA_EXPIRE);
+        // 4. 取 base64 图片（容错：确保可直接用于 img.src）
+        String image = captcha.getImageBase64();
+        if (!image.startsWith("data:")) {
+            image = "data:image/png;base64," + image;
+        }
+        // 5. 组装返回
+        CaptchaVO vo = new CaptchaVO();
+        vo.setCaptchaToken(captchaToken);
+        vo.setImage(image);
+        return PoetryResult.success(vo);
     }
 
     @Override
