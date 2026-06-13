@@ -22,13 +22,15 @@ public interface UserService extends IService<User> {
 
     /**
      * 用户名、邮箱、手机号/密码登录
-     * 统一 Token 体系，不再区分前台/后台登录
+     * 统一 Token 体系，不再区分前后台登录
      *
-     * @param account 账号（用户名/邮箱/手机号）
-     * @param password 密码（加密后）
+     * @param account      账号（用户名/邮箱/手机号）
+     * @param password     密码（AES 加密后）
+     * @param captchaToken 图形验证码 token（来自 GET /user/captcha）
+     * @param code         用户输入的图形验证码
      * @return 用户信息（含 Token）
      */
-    PoetryResult<UserVO> login(String account, String password);
+    PoetryResult<UserVO> login(String account, String password, String captchaToken, String code);
 
     /**
      * 生成图形验证码（公开接口，无需登录）

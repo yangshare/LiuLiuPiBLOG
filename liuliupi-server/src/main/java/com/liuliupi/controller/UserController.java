@@ -56,8 +56,10 @@ public class UserController {
      */
     @PostMapping("/login")
     public PoetryResult<UserVO> login(@RequestParam("account") String account,
-                                      @RequestParam("password") String password) {
-        return userService.login(account, password);
+                                      @RequestParam("password") String password,
+                                      @RequestParam("captchaToken") String captchaToken,
+                                      @RequestParam("code") String code) {
+        return userService.login(account, password, captchaToken, code);
     }
 
 

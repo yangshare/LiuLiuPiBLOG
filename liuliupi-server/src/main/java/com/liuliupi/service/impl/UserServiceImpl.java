@@ -76,7 +76,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private String codeFormat;
 
     @Override
-    public PoetryResult<UserVO> login(String account, String password) {
+    public PoetryResult<UserVO> login(String account, String password, String captchaToken, String code) {
+        // 1. 图形验证码校验（一次性消费）。校验不通过直接返回，不走后续解密/查库逻辑。
+        String captchaError = verifyCaptcha(captchaToken, code);
+        if (captchaError != null) {
+            return PoetryResult.fail(captchaError);
+        }
+        // 2. AES 解密
         password = new String(SecureUtil.aes(CommonConst.CRYPOTJS_KEY.getBytes(StandardCharsets.UTF_8)).decrypt(password));
 
         User one = lambdaQuery().and(wrapper -> wrapper
@@ -144,6 +150,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         vo.setCaptchaToken(captchaToken);
         vo.setImage(image);
         return PoetryResult.success(vo);
+    }
+
+    /**
+     * 校验图形验证码（一次性消费：无论校验对错，校验后立即从缓存删除，防同一张图被反复枚举）。
+     * <p>
+     * 提取为独立可测单元，避免 login() 的 DB 查询干扰单元测试。
+     *
+     * @param captchaToken 验证码 token
+     * @param code         用户输入的验证码
+     * @return null 表示校验通过；非 null 表示错误提示信息
+     */
+    static String verifyCaptcha(String captchaToken, String code) {
+        // 1. 取出缓存的验证码文本
+        String cachedCode = (String) PoetryCache.get(CommonConst.CAPTCHA_KEY + captchaToken);
+        // 2. 一次性消费：无论对错立即删除
+        PoetryCache.remove(CommonConst.CAPTCHA_KEY + captchaToken);
+        // 3. 校验
+        if (!StringUtils.hasText(captchaToken) || cachedCode == null) {
+            return "验证码已失效，请刷新！";
+        }
+        if (!cachedCode.equalsIgnoreCase(code)) {
+            return "验证码错误！";
+        }
+        return null;
     }
 
     @Override
