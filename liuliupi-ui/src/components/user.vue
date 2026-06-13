@@ -29,6 +29,11 @@
             <h1>登录</h1>
             <input v-model="account" type="text" placeholder="用户名/邮箱/手机号">
             <input v-model="password" type="password" placeholder="密码">
+            <div class="login-captcha">
+              <input v-model="captchaCode" type="text" placeholder="验证码">
+              <img :src="captchaImage" @click="getCaptcha()"
+                   class="login-captcha-img" alt="验证码" title="点击刷新">
+            </div>
             <a href="#" @click="changeDialog('找回密码')">忘记密码？</a>
             <button @click="login()">登录</button>
           </div>
@@ -217,6 +222,10 @@
         username: "",
         account: "",
         password: "",
+        // 图形验证码（登录专用，与注册/找回密码的 code 区分）
+        captchaToken: "",
+        captchaImage: "",
+        captchaCode: "",
         phoneNumber: "",
         email: "",
         avatar: "",
@@ -230,7 +239,7 @@
     },
     computed: {},
     created() {
-
+      this.getCaptcha();
     },
     methods: {
       addPicture(res) {
@@ -243,6 +252,21 @@
       signIn() {
         document.querySelector("#loginAndRegist").classList.remove('right-panel-active');
       },
+      getCaptcha() {
+        this.$http.get(this.$constant.baseURL + "/user/captcha")
+          .then((res) => {
+            if (!this.$common.isEmpty(res.data)) {
+              this.captchaToken = res.data.captchaToken;
+              this.captchaImage = res.data.image;
+            }
+          })
+          .catch((error) => {
+            this.$message({
+              message: error.message,
+              type: "error"
+            });
+          });
+      },
       login() {
         if (this.$common.isEmpty(this.account) || this.$common.isEmpty(this.password)) {
           this.$message({
@@ -252,9 +276,19 @@
           return;
         }
 
+        if (this.$common.isEmpty(this.captchaCode)) {
+          this.$message({
+            message: "请输入验证码！",
+            type: "error"
+          });
+          return;
+        }
+
         let user = {
           account: this.account.trim(),
-          password: this.$common.encrypt(this.password.trim())
+          password: this.$common.encrypt(this.password.trim()),
+          captchaToken: this.captchaToken,
+          code: this.captchaCode.trim()
         };
 
         this.$http.post(this.$constant.baseURL + "/user/login", user, false, false)
@@ -264,6 +298,7 @@
               localStorage.setItem("userToken", res.data.accessToken);
               this.account = "";
               this.password = "";
+              this.captchaCode = "";
               this.$router.push({path: '/'});
             }
           })
@@ -272,6 +307,9 @@
               message: error.message,
               type: "error"
             });
+            // 登录失败：验证码已被一次性消费，刷新图片并清空输入
+            this.captchaCode = "";
+            this.getCaptcha();
           });
       },
       regist() {
@@ -686,6 +724,24 @@
     margin: 10px 0;
     width: 100%;
     outline: none;
+  }
+
+  .login-captcha {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .login-captcha input {
+    flex: 1;
+  }
+
+  .login-captcha-img {
+    width: 110px;
+    height: 40px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 4px;
   }
 
   .in-up button {
