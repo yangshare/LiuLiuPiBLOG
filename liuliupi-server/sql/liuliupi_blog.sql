@@ -134,7 +134,7 @@ CREATE TABLE `liuliupi_blog`.`web_info` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `web_name` varchar(16) NOT NULL COMMENT '网站名称',
   `web_title` varchar(512) NOT NULL COMMENT '网站信息',
-  `notices` varchar(512) DEFAULT NULL COMMENT '公告',
+  `notices` text DEFAULT NULL COMMENT '公告',
   `footer` varchar(256) NOT NULL COMMENT '页脚',
   `background_image` varchar(256) DEFAULT NULL COMMENT '背景',
   `avatar` varchar(256) NOT NULL COMMENT '头像',
@@ -146,6 +146,20 @@ CREATE TABLE `liuliupi_blog`.`web_info` (
 
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='网站信息表';
+
+DROP TABLE IF EXISTS `liuliupi_blog`.`push_notification`;
+
+CREATE TABLE `liuliupi_blog`.`push_notification` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `title` varchar(200) DEFAULT NULL COMMENT '推送标题',
+  `cover` varchar(500) DEFAULT NULL COMMENT '封面图 URL',
+  `url` varchar(500) DEFAULT NULL COMMENT '点击跳转链接',
+  `enabled` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否启用[0:否，1:是]',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最终修改时间',
+
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='首页弹窗推送配置表';
 
 DROP TABLE IF EXISTS `liuliupi_blog`.`resource_path`;
 
@@ -311,7 +325,7 @@ CREATE TABLE `liuliupi_blog`.`im_chat_user_group_message` (
 
 INSERT INTO `liuliupi_blog`.`user`(`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`, `admire`, `subscribe`, `avatar`, `introduction`, `user_type`, `update_by`, `deleted`) VALUES (1, 'Sara', '47bce5c74f589f4867dbd57e9ca9f808', '', '', 1, 1, '', '', '', '', '', 0, 'Sara', 0);
 
-INSERT INTO `liuliupi_blog`.`web_info`(`id`, `web_name`, `web_title`, `notices`, `footer`, `background_image`, `avatar`, `random_avatar`, `random_name`, `random_cover`, `waifu_json`, `status`) VALUES (1, 'Sara', 'LIULIUPI', '[]', '云想衣裳花想容， 春风拂槛露华浓。', '', '', '[]', '[]', '[]', '{}', 1);
+INSERT INTO `liuliupi_blog`.`web_info`(`id`, `web_name`, `web_title`, `notices`, `footer`, `background_image`, `avatar`, `random_avatar`, `random_name`, `random_cover`, `waifu_json`, `status`) VALUES (1, 'Sara', 'LIULIUPI', '', '云想衣裳花想容， 春风拂槛露华浓。', '', '', '[]', '[]', '[]', '{}', 1);
 
 INSERT INTO `liuliupi_blog`.`family` (`id`, `user_id`, `bg_cover`, `man_cover`, `woman_cover`, `man_name`, `woman_name`, `timing`, `countdown_title`, `countdown_time`, `status`, `family_info`, `like_count`, `create_time`, `update_time`) VALUES (1, 1, '背景封面', '男生头像', '女生头像', 'Sara', 'Abby', '2000-01-01 00:00:00', '春节倒计时', '2025-01-29 00:00:00', 1, '', 0, '2000-01-01 00:00:00', '2000-01-01 00:00:00');
 
