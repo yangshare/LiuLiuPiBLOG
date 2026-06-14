@@ -180,6 +180,28 @@
         </div>
       </el-tab-pane>
     </el-tabs>
+
+    <el-dialog
+      title="添加图片链接"
+      :visible.sync="addUrlDialogVisible"
+      width="420px"
+      append-to-body
+    >
+      <el-form>
+        <el-form-item :error="addUrlError">
+          <el-input
+            v-model="addUrlValue"
+            placeholder="https://example.com/avatar.png"
+            size="small"
+          />
+        </el-form-item>
+      </el-form>
+      <div class="dialog-tip">支持 jpg、png、gif、webp、svg 等常见图片格式。</div>
+      <span slot="footer">
+        <el-button size="small" @click="addUrlDialogVisible = false">取消</el-button>
+        <el-button size="small" type="primary" @click="confirmAddUrl">确认添加</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -269,6 +291,33 @@
       showAddUrlDialog(type) {
         this.addUrlType = type
         this.addUrlDialogVisible = true
+      },
+      validateImageUrl(url) {
+        if (!url) {
+          return '请输入有效的图片链接'
+        }
+        if (!/^https?:\/\//i.test(url)) {
+          return '请输入有效的图片链接'
+        }
+        if (!/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url)) {
+          return '请输入有效的图片链接'
+        }
+        return ''
+      },
+      confirmAddUrl() {
+        const error = this.validateImageUrl(this.addUrlValue)
+        if (error) {
+          this.addUrlError = error
+          return
+        }
+        if (this.addUrlType === 'avatar') {
+          this.randomAvatar.push(this.addUrlValue)
+        } else if (this.addUrlType === 'cover') {
+          this.randomCover.push(this.addUrlValue)
+        }
+        this.addUrlDialogVisible = false
+        this.addUrlValue = ''
+        this.addUrlError = ''
       },
       changeWebStatus(webInfo) {
         this.$http.post(this.$constant.baseURL + "/webInfo/updateWebInfo", {
