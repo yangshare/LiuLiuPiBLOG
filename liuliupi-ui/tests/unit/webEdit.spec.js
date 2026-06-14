@@ -250,4 +250,27 @@ describe('webEdit.vue', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.addUrlValue).toBe('https://example.com/keep.jpg')
   })
+
+  it('renders upload section divider with title', () => {
+    const wrapper = shallowMount(WebEdit, {
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture'
+      ]
+    })
+    const dividers = wrapper.findAll('.upload-divider')
+    expect(dividers).toHaveLength(2)
+    expect(dividers.at(0).text()).toContain('或上传本地图片')
+  })
 })

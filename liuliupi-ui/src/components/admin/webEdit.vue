@@ -135,6 +135,7 @@
           >
             添加图片链接
           </el-button>
+          <div class="upload-divider">或上传本地图片（一次最多 5 张，每张不超过 1M）</div>
           <uploadPicture prefix="randomAvatar" style="margin: 10px" @addPicture="addRandomAvatar"
                          :maxSize="1"
                          :maxNumber="5"></uploadPicture>
@@ -170,6 +171,7 @@
           >
             添加图片链接
           </el-button>
+          <div class="upload-divider">或上传本地图片（一次最多 5 张，每张不超过 1M）</div>
           <uploadPicture prefix="randomCover" style="margin: 10px" @addPicture="addRandomCover"
                          :maxSize="2"
                          :maxNumber="5"></uploadPicture>
@@ -559,6 +561,22 @@
     border-radius: 2px;
     width: 40px;
     height: 40px;
+  }
+
+  .upload-divider {
+    border-top: 1px dashed #dcdfe6;
+    padding-top: 16px;
+    margin-top: 16px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: #909399;
+  }
+
+  .dialog-tip {
+    font-size: 12px;
+    color: #909399;
+    margin-top: -8px;
+    line-height: 1.5;
   }
 
 </style>
