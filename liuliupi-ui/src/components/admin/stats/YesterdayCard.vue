@@ -1,8 +1,10 @@
 <template>
   <el-card class="daily-card">
     <div slot="header" class="daily-card__header">昨日访问</div>
-    <StatKpi label="昨日访问量" :value="count" />
-    <VisitorList class="daily-card__list" :users="users" />
+    <div class="daily-card__body">
+      <StatKpi label="昨日访问量" :value="count" />
+      <VisitorList class="daily-card__list" :users="users" />
+    </div>
   </el-card>
 </template>
 
@@ -28,12 +30,27 @@ export default {
 
 <style scoped>
 .daily-card {
-  margin-bottom: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+.daily-card ::v-deep .el-card__body {
+  flex: 1;
+  overflow: hidden;
+}
+.daily-card__body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .daily-card__header {
   font-weight: bold;
 }
 .daily-card__list {
+  flex: 1;
+  overflow: auto;
   margin-top: 12px;
+  min-height: 0;
 }
 </style>

@@ -296,13 +296,15 @@
         if (!url) {
           return '请输入有效的图片链接'
         }
-        if (!/^https?:\/\//i.test(url)) {
+        let parsedUrl
+        try {
+          parsedUrl = new URL(url)
+        } catch (error) {
           return '请输入有效的图片链接'
         }
-        if (!/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url)) {
-          return '请输入有效的图片链接'
-        }
-        return ''
+        const isHttpUrl = ['http:', 'https:'].includes(parsedUrl.protocol)
+        const isImagePath = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(parsedUrl.pathname)
+        return isHttpUrl && isImagePath ? '' : '请输入有效的图片链接'
       },
       confirmAddUrl() {
         const error = this.validateImageUrl(this.addUrlValue)
@@ -495,7 +497,7 @@
     border: 1px solid #e4e7ed;
   }
 
-  .random-image-url {
+  .random-image-item .random-image-url {
     display: flex;
     align-items: center;
     margin: 10px 0 0;

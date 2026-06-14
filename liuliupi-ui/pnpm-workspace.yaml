@@ -1,3 +1,4 @@
+scriptShell: pwsh
 allowBuilds:
   core-js: true
   deasync: true

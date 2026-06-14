@@ -1,6 +1,6 @@
 <template>
   <div class="visitor-list">
-    <el-table v-if="users && users.length" :data="users" size="small">
+    <el-table v-if="users && users.length" :data="users" size="small" height="100%">
       <el-table-column align="center" label="头像" width="80">
         <template slot-scope="scope">
           <el-avatar class="visitor-list__avatar" :size="30" :src="scope.row.avatar" />
@@ -25,6 +25,10 @@ export default {
 </script>
 
 <style scoped>
+.visitor-list {
+  height: 100%;
+  overflow: auto;
+}
 .visitor-list__avatar {
   vertical-align: middle;
 }

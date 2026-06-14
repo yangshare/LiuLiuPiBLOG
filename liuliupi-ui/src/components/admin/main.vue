@@ -20,7 +20,7 @@
           :ip-data="historyInfo.ip_history_ip"
         />
       </el-col>
-      <el-col :xs="24" :sm="24" :md="8" :lg="8">
+      <el-col :xs="24" :sm="24" :md="8" :lg="8" class="admin-main__side">
         <TodayCard
           :count="historyInfo.ip_count_today"
           :users="historyInfo.username_today"
@@ -85,6 +85,11 @@ export default {
   font-size: 16px;
   color: var(--black);
   margin-bottom: 16px;
+}
+.admin-main__side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 .admin-main__content {
   align-items: stretch;

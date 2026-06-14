@@ -31,6 +31,7 @@ describe('webEdit.vue', () => {
         'el-card',
         'el-tag',
         'el-image',
+        'el-dialog',
         'ImageUrlInput',
         'uploadPicture'
       ]
@@ -181,6 +182,40 @@ describe('webEdit.vue', () => {
     wrapper.vm.confirmAddUrl()
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.randomCover).toEqual(['https://example.com/cover.png'])
+  })
+
+  it('adds valid image url with query string or hash on confirm', async () => {
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          randomAvatar: [],
+          randomCover: [],
+          addUrlType: 'avatar',
+          addUrlValue: 'https://cdn.example.com/avatar.jpg?token=abc#preview',
+          addUrlDialogVisible: true
+        }
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture'
+      ]
+    })
+    wrapper.vm.confirmAddUrl()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.randomAvatar).toEqual(['https://cdn.example.com/avatar.jpg?token=abc#preview'])
+    expect(wrapper.vm.addUrlDialogVisible).toBe(false)
+    expect(wrapper.vm.addUrlError).toBe('')
   })
 
   it.each([
