@@ -13,6 +13,7 @@
 ### AI 工具本地数据 ###
 .codegraph/
 .claude/
+.superpowers/
 
 ### Java / Maven ###
 target/
