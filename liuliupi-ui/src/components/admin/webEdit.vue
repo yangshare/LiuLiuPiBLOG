@@ -53,26 +53,32 @@
       </el-tab-pane>
 
       <el-tab-pane label="公告" name="notice">
-        <div class="tag-block">
-          <el-tag
-            :key="i"
-            v-for="(notice, i) in notices"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(notices, notice)">
-            {{notice}}
-          </el-tag>
-          <el-input
-            class="input-new-tag"
-            v-if="inputNoticeVisible"
-            v-model="inputNoticeValue"
-            ref="saveNoticeInput"
-            size="small"
-            @keyup.enter.native="handleInputNoticeConfirm"
-            @blur="handleInputNoticeConfirm">
-          </el-input>
-          <el-button v-else class="button-new-tag" size="small" @click="showNoticeInput()">+ 公告</el-button>
-        </div>
+        <el-card>
+          <div slot="header">公告 Markdown</div>
+          <mavon-editor v-model="webInfo.notices" />
+        </el-card>
+
+        <el-card class="push-notification-card">
+          <div slot="header">推送设置</div>
+          <el-form :model="pushNotification" label-width="100px">
+            <el-form-item label="推送标题">
+              <el-input v-model="pushNotification.title" placeholder="请输入推送标题"></el-input>
+            </el-form-item>
+
+            <el-form-item label="封面链接">
+              <el-input v-model="pushNotification.cover" placeholder="https://example.com/cover.jpg"></el-input>
+            </el-form-item>
+
+            <el-form-item label="跳转链接">
+              <el-input v-model="pushNotification.url" placeholder="https://example.com/"></el-input>
+            </el-form-item>
+
+            <el-form-item label="是否启用">
+              <el-switch v-model="pushNotification.enabled"></el-switch>
+            </el-form-item>
+          </el-form>
+        </el-card>
+
         <div class="form-actions">
           <el-button type="primary" @click="saveNotice()">保存</el-button>
         </div>
@@ -223,10 +229,14 @@
         activeTab: 'basic',
         disabled: true,
         types: ['', 'success', 'info', 'danger', 'warning'],
-        inputNoticeVisible: false,
-        inputNoticeValue: "",
         inputRandomNameVisible: false,
         inputRandomNameValue: "",
+        pushNotification: {
+          title: "",
+          cover: "",
+          url: "",
+          enabled: true
+        },
         addUrlType: '', // 'avatar' | 'cover'
         addUrlDialogVisible: false,
         addUrlValue: '',
@@ -239,9 +249,9 @@
           backgroundImage: "",
           avatar: "",
           waifuJson: "",
-          status: false
+          status: false,
+          notices: ""
         },
-        notices: [],
         randomAvatar: [],
         randomName: [],
         randomCover: [],
@@ -352,10 +362,11 @@
               this.webInfo.avatar = res.data.avatar;
               this.webInfo.waifuJson = res.data.waifuJson;
               this.webInfo.status = res.data.status;
-              this.notices = JSON.parse(res.data.notices);
+              this.webInfo.notices = res.data.notices || "";
               this.randomAvatar = JSON.parse(res.data.randomAvatar);
               this.randomName = JSON.parse(res.data.randomName);
               this.randomCover = JSON.parse(res.data.randomCover);
+              this.getPushNotification();
             }
           })
           .catch((error) => {
@@ -380,25 +391,24 @@
       handleClose(array, item) {
         array.splice(array.indexOf(item), 1);
       },
-      handleInputNoticeConfirm() {
-        if (this.inputNoticeValue) {
-          this.notices.push(this.inputNoticeValue);
-        }
-        this.inputNoticeVisible = false;
-        this.inputNoticeValue = '';
-      },
-      showNoticeInput() {
-        this.inputNoticeVisible = true;
-        this.$nextTick(() => {
-          this.$refs.saveNoticeInput.$refs.input.focus();
-        });
-      },
-      saveNotice() {
-        let param = {
-          id: this.webInfo.id,
-          notices: JSON.stringify(this.notices)
-        }
-        this.updateWebInfo(param);
+      getPushNotification() {
+        this.$http.get(this.$constant.baseURL + "/pushNotification/admin/getPushNotification", {}, true)
+          .then((res) => {
+            if (!this.$common.isEmpty(res.data)) {
+              this.pushNotification = {
+                title: res.data.title || "",
+                cover: res.data.cover || "",
+                url: res.data.url || "",
+                enabled: res.data.enabled === undefined ? true : res.data.enabled
+              };
+            }
+          })
+          .catch((error) => {
+            this.$message({
+              message: error.message,
+              type: "error"
+            });
+          });
       },
       handleInputRandomNameConfirm() {
         if (this.inputRandomNameValue) {
@@ -412,6 +422,30 @@
         this.$nextTick(() => {
           this.$refs.saveRandomNameInput.$refs.input.focus();
         });
+      },
+      saveNotice() {
+        let noticeParam = {
+          id: this.webInfo.id,
+          notices: this.webInfo.notices
+        };
+
+        Promise.all([
+          this.$http.post(this.$constant.baseURL + "/webInfo/updateWebInfo", noticeParam, true),
+          this.$http.post(this.$constant.baseURL + "/pushNotification/admin/savePushNotification", this.pushNotification, true)
+        ])
+          .then(() => {
+            this.getWebInfo();
+            this.$message({
+              message: "保存成功！",
+              type: "success"
+            });
+          })
+          .catch((error) => {
+            this.$message({
+              message: error.message,
+              type: "error"
+            });
+          });
       },
       saveRandomResources() {
         this.updateWebInfo({
@@ -559,6 +593,10 @@
     color: #909399;
     text-align: center;
     padding: 20px 0;
+  }
+
+  .push-notification-card {
+    margin-top: 20px;
   }
 
 </style>

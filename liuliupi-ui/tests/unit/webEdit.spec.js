@@ -337,4 +337,117 @@ describe('webEdit.vue', () => {
     expect(tips).toHaveLength(2)
     expect(tips.at(0).text()).toBe('暂无图片，点击下方按钮添加。')
   })
+
+  it('renders mavon-editor in notice tab without imgAdd binding', () => {
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          webInfo: { notices: '# 公告\n\n欢迎使用' }
+        }
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture',
+        'mavon-editor'
+      ]
+    })
+
+    const editor = wrapper.find('mavon-editor-stub')
+    expect(editor.exists()).toBe(true)
+    expect(editor.attributes('value')).toBe('# 公告\n\n欢迎使用')
+    expect(editor.attributes('imgadd')).toBeUndefined()
+  })
+
+  it('renders push notification form in notice tab', () => {
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          pushNotification: {
+            title: '推送标题',
+            cover: 'https://example.com/cover.jpg',
+            url: 'https://example.com/',
+            enabled: true
+          }
+        }
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture',
+        'mavon-editor'
+      ]
+    })
+
+    const inputs = wrapper.findAll('el-input-stub')
+    expect(inputs.filter(i => i.attributes('value') === '推送标题').length).toBeGreaterThan(0)
+    expect(inputs.filter(i => i.attributes('value') === 'https://example.com/cover.jpg').length).toBeGreaterThan(0)
+    expect(inputs.filter(i => i.attributes('value') === 'https://example.com/').length).toBeGreaterThan(0)
+  })
+
+  it('saveNotice calls both updateWebInfo and savePushNotification', async () => {
+    const postMock = jest.fn().mockResolvedValue({})
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          webInfo: { id: 1, notices: '# 公告' },
+          pushNotification: { title: '推送', cover: '', url: '', enabled: true }
+        }
+      },
+      mocks: {
+        $http: { post: postMock, get: jest.fn() },
+        $constant: { baseURL: 'http://localhost:8080' },
+        $message: jest.fn()
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture',
+        'mavon-editor'
+      ]
+    })
+
+    await wrapper.vm.saveNotice()
+
+    expect(postMock).toHaveBeenCalledWith(
+      'http://localhost:8080/webInfo/updateWebInfo',
+      { id: 1, notices: '# 公告' },
+      true
+    )
+    expect(postMock).toHaveBeenCalledWith(
+      'http://localhost:8080/pushNotification/admin/savePushNotification',
+      { title: '推送', cover: '', url: '', enabled: true },
+      true
+    )
+  })
 })
