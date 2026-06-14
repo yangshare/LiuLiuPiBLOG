@@ -1,0 +1,6 @@
+scriptShell: pwsh
+allowBuilds:
+  core-js: true
+  deasync: true
+  ejs: true
+  yorkie: true
