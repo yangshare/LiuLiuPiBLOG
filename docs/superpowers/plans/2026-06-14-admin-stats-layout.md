@@ -64,11 +64,17 @@ git commit -m "chore(ui): 安装 echarts 用于中国地图可视化"
 **文件：**
 - 创建：`liuliupi-ui/public/geo/china.json`
 
-- [ ] **步骤 1：从 echarts 包复制 GeoJSON**
+- [ ] **步骤 1：获取中国地图 GeoJSON**
+
+`echarts@5` 不再内置地图数据，这里通过 `pnpm pack echarts@4.9.0` 临时下载并提取其内置的中国地图 GeoJSON：
 
 ```bash
-mkdir -p liuliupi-ui/public/geo
-cp liuliupi-ui/node_modules/echarts/map/json/china.json liuliupi-ui/public/geo/china.json
+cd liuliupi-ui
+pnpm pack echarts@4.9.0
+tar -xzf echarts-4.9.0.tgz
+mkdir -p public/geo
+cp package/map/json/china.json public/geo/china.json
+rm -rf package echarts-4.9.0.tgz
 ```
 
 - [ ] **步骤 2：验证文件存在且非空**
@@ -317,7 +323,25 @@ import { shallowMount } from '@vue/test-utils'
 import ProvinceMap from '@/components/admin/stats/ProvinceMap.vue'
 
 describe('ProvinceMap.vue', () => {
-  it('renders map container', () => {
+  let fetchSpy
+
+  const mockGeoJson = {
+    type: 'FeatureCollection',
+    features: []
+  }
+
+  beforeEach(() => {
+    fetchSpy = jest.spyOn(global, 'fetch').mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(mockGeoJson)
+    })
+  })
+
+  afterEach(() => {
+    fetchSpy.mockRestore()
+  })
+
+  it('renders map container', async () => {
     const wrapper = shallowMount(ProvinceMap, {
       propsData: {
         provinceData: [
@@ -326,17 +350,20 @@ describe('ProvinceMap.vue', () => {
         ]
       }
     })
+    await wrapper.vm.$nextTick()
     expect(wrapper.find('.province-map').exists()).toBe(true)
     expect(wrapper.find('.province-map__fallback').exists()).toBe(false)
   })
 
   it('shows fallback table when load fails', async () => {
+    fetchSpy.mockRejectedValueOnce(new Error('network error'))
     const wrapper = shallowMount(ProvinceMap, {
       propsData: {
         provinceData: [{ province: '山西省', num: 294 }]
       }
     })
-    wrapper.setData({ loadFailed: true })
+    await wrapper.vm.$nextTick()
+    await new Promise(resolve => setTimeout(resolve, 0))
     await wrapper.vm.$nextTick()
     expect(wrapper.find('.province-map__fallback').exists()).toBe(true)
     expect(wrapper.text()).toContain('山西省')
