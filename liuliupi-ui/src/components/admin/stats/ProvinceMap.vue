@@ -112,11 +112,7 @@ export default {
 .province-map,
 .province-map__chart {
   width: 100%;
-  height: 100%;
-}
-.province-map__fallback {
-  height: 100%;
-  overflow: auto;
+  height: 220px;
 }
 .province-map__fallback-tip {
   font-size: 12px;
