@@ -1,7 +1,11 @@
 package com.liuliupi.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.liuliupi.dao.PushNotificationMapper;
 import com.liuliupi.entity.PushNotification;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.session.Configuration;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +26,11 @@ class PushNotificationServiceImplTest {
 
     @InjectMocks
     private PushNotificationServiceImpl pushNotificationService;
+
+    @BeforeAll
+    static void initTableInfo() {
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new Configuration(), ""), PushNotification.class);
+    }
 
     @Test
     void saveOrUpdateShouldInsertWhenNoRecordExists() {
@@ -52,6 +61,7 @@ class PushNotificationServiceImplTest {
 
         pushNotificationService.saveOrUpdateSingle(push);
 
+        assertThat(push.getId()).isEqualTo(1);
         verify(pushNotificationMapper, never()).insert(any());
         verify(pushNotificationMapper).updateById(push);
     }
@@ -69,6 +79,8 @@ class PushNotificationServiceImplTest {
 
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1);
+        assertThat(result.getTitle()).isEqualTo("推送");
+        assertThat(result.getEnabled()).isTrue();
     }
 
     @Test
