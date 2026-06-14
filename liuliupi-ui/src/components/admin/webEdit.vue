@@ -227,10 +227,6 @@
         inputNoticeValue: "",
         inputRandomNameVisible: false,
         inputRandomNameValue: "",
-        inputRandomAvatarVisible: false,
-        inputRandomAvatarValue: "",
-        inputRandomCoverVisible: false,
-        inputRandomCoverValue: "",
         addUrlType: '', // 'avatar' | 'cover'
         addUrlDialogVisible: false,
         addUrlValue: '',
@@ -413,32 +409,6 @@
         this.inputRandomNameVisible = true;
         this.$nextTick(() => {
           this.$refs.saveRandomNameInput.$refs.input.focus();
-        });
-      },
-      handleInputRandomAvatarConfirm() {
-        if (this.inputRandomAvatarValue) {
-          this.randomAvatar.push(this.inputRandomAvatarValue);
-        }
-        this.inputRandomAvatarVisible = false;
-        this.inputRandomAvatarValue = '';
-      },
-      showRandomAvatarInput() {
-        this.inputRandomAvatarVisible = true;
-        this.$nextTick(() => {
-          this.$refs.saveRandomAvatarInput.$refs.input.focus();
-        });
-      },
-      handleInputRandomCoverConfirm() {
-        if (this.inputRandomCoverValue) {
-          this.randomCover.push(this.inputRandomCoverValue);
-        }
-        this.inputRandomCoverVisible = false;
-        this.inputRandomCoverValue = '';
-      },
-      showRandomCoverInput() {
-        this.inputRandomCoverVisible = true;
-        this.$nextTick(() => {
-          this.$refs.saveRandomCoverInput.$refs.input.focus();
         });
       },
       saveRandomResources() {
