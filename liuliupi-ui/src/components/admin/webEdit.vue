@@ -123,6 +123,7 @@
                 {{avatar}}
               </el-tag>
             </div>
+            <div v-if="randomAvatar.length === 0" class="empty-tip">暂无图片，点击下方按钮添加。</div>
           </div>
 
           <el-button
@@ -159,6 +160,7 @@
                 {{cover}}
               </el-tag>
             </div>
+            <div v-if="randomCover.length === 0" class="empty-tip">暂无图片，点击下方按钮添加。</div>
           </div>
 
           <el-button
@@ -577,6 +579,14 @@
     color: #909399;
     margin-top: -8px;
     line-height: 1.5;
+  }
+
+  .empty-tip {
+    grid-column: 1 / -1;
+    font-size: 14px;
+    color: #909399;
+    text-align: center;
+    padding: 20px 0;
   }
 
 </style>

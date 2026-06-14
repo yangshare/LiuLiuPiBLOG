@@ -273,4 +273,33 @@ describe('webEdit.vue', () => {
     expect(dividers).toHaveLength(2)
     expect(dividers.at(0).text()).toContain('或上传本地图片')
   })
+
+  it('shows empty tip when random image list is empty', () => {
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          randomAvatar: [],
+          randomCover: []
+        }
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture'
+      ]
+    })
+    const tips = wrapper.findAll('.empty-tip')
+    expect(tips).toHaveLength(2)
+    expect(tips.at(0).text()).toBe('暂无图片，点击下方按钮添加。')
+  })
 })
