@@ -3,30 +3,6 @@ import CryptoJS from 'crypto-js';
 import store from '../store';
 
 export default {
-  pushNotification(notices, isNotification) {
-    if (isNotification) {
-      if (this.isEmpty(notices)) {
-        return [];
-      } else {
-        return notices.filter(f => "推送标题：" !== f.substr(0, 5) &&
-          "推送封面：" !== f.substr(0, 5) &&
-          "推送链接：" !== f.substr(0, 5));
-      }
-    } else {
-      let push = {};
-      notices.forEach(notice => {
-        if ("推送标题：" === notice.substr(0, 5)) {
-          push['标题'] = notice.substr(5);
-        } else if ("推送封面：" === notice.substr(0, 5)) {
-          push['封面'] = notice.substr(5);
-        } else if ("推送链接：" === notice.substr(0, 5)) {
-          push['链接'] = notice.substr(5);
-        }
-      });
-      return push;
-    }
-  },
-
   mobile() {
     let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
     return flag && flag.length && flag.length > 0;

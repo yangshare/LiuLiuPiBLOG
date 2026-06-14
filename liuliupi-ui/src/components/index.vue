@@ -43,13 +43,12 @@
               <myAside @selectSort="selectSort" @selectArticle="selectArticle"></myAside>
             </div>
             <div class="recent-posts">
-              <div class="announcement background-opacity">
-                <i class="fa fa-volume-up" aria-hidden="true"></i>
-                <div>
-                  <div v-for="(notice, index) in $common.pushNotification($store.state.webInfo.notices, true)" :key="index">
-                    {{ notice }}
-                  </div>
+              <div class="announcement-board background-opacity">
+                <div class="announcement-header">
+                  <i class="fa fa-volume-up" aria-hidden="true"></i>
+                  <span>公告</span>
                 </div>
+                <div class="announcement-body" v-html="noticeHtml"></div>
               </div>
 
               <div v-show="indexType === 1">
@@ -164,6 +163,7 @@
   </div>
 </template>
 <script>
+  import MarkdownIt from 'markdown-it';
   const loader = () => import( "./common/loader");
   const zombie = () => import( "./common/zombie");
   const printer = () => import( "./common/printer");
@@ -190,6 +190,7 @@
         loading: false,
         showAside: true,
         indexType: 1,
+        noticeHtml: '',
         printerInfo: "你看对面的青山多漂亮",
         pagination: {
           current: 1,
@@ -213,6 +214,7 @@
     watch: {},
 
     created() {
+      this.renderNotice();
       this.getGuShi();
       this.getSortArticles();
     },
@@ -225,17 +227,36 @@
 
     mounted() {
       setTimeout(() => {
-        this.push = this.$common.pushNotification(this.$store.state.webInfo.notices, false);
-        if(!this.$common.isEmpty(this.push)) {
-          if("0" !== localStorage.getItem("showPushNotification_" + this.push['链接'])) {
-            this.pushDialogVisible = true;
-            localStorage.setItem("showPushNotification_" + this.push['链接'], "0");
-          }
-        }
+        this.$http.get(this.$constant.baseURL + '/pushNotification/getPushNotification')
+          .then((res) => {
+            if (!this.$common.isEmpty(res.data)) {
+              this.push = {
+                '标题': res.data.title,
+                '封面': res.data.cover,
+                '链接': res.data.url
+              };
+              if ("0" !== localStorage.getItem("showPushNotification_" + this.push['链接'])) {
+                this.pushDialogVisible = true;
+                localStorage.setItem("showPushNotification_" + this.push['链接'], "0");
+              }
+            }
+          })
+          .catch(() => {
+            // 静默忽略，不弹窗
+          });
       }, 2000);
     },
 
     methods: {
+      renderNotice() {
+        const notices = this.$store.state.webInfo.notices || '';
+        try {
+          const md = new MarkdownIt({ breaks: true });
+          this.noticeHtml = md.render(notices);
+        } catch (e) {
+          this.noticeHtml = notices;
+        }
+      },
       async selectSort(sort) {
         this.pagination = {
           current: 1,
@@ -582,4 +603,44 @@
       font-size: 35px;
     }
   }
+  .announcement-board {
+    padding: 22px;
+    border: 1px dashed var(--lightGray);
+    color: var(--greyFont);
+    border-radius: 10px;
+    margin: 40px auto 40px;
+  }
+
+  .announcement-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .announcement-header i {
+    color: var(--themeBackground);
+    font-size: 22px;
+    margin-right: 10px;
+    animation: scale 0.8s ease-in-out infinite;
+  }
+
+  .announcement-body {
+    line-height: 1.8;
+  }
+
+  .announcement-body :deep(p) {
+    margin: 0 0 12px 0;
+  }
+
+  .announcement-body :deep(ul),
+  .announcement-body :deep(ol) {
+    padding-left: 20px;
+  }
+
+  .announcement-body :deep(a) {
+    color: var(--themeBackground);
+  }
+
 </style>
