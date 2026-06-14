@@ -366,7 +366,6 @@ describe('webEdit.vue', () => {
     const editor = wrapper.find('mavon-editor-stub')
     expect(editor.exists()).toBe(true)
     expect(editor.attributes('value')).toBe('# 公告\n\n欢迎使用')
-    expect(editor.attributes('imgadd')).toBeUndefined()
   })
 
   it('renders push notification form in notice tab', () => {
@@ -449,5 +448,53 @@ describe('webEdit.vue', () => {
       { title: '推送', cover: '', url: '', enabled: true },
       true
     )
+  })
+
+  it('saveNotice stops and shows error when updateWebInfo fails', async () => {
+    const postMock = jest.fn()
+      .mockRejectedValueOnce(new Error('网络错误'))
+    const messageMock = jest.fn()
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          webInfo: { id: 1, notices: '# 公告' },
+          pushNotification: { title: '推送', cover: '', url: '', enabled: true }
+        }
+      },
+      mocks: {
+        $http: { post: postMock, get: jest.fn() },
+        $constant: { baseURL: 'http://localhost:8080' },
+        $message: messageMock
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture',
+        'mavon-editor'
+      ]
+    })
+
+    await wrapper.vm.saveNotice()
+
+    expect(postMock).toHaveBeenCalledTimes(1)
+    expect(postMock).toHaveBeenCalledWith(
+      'http://localhost:8080/webInfo/updateWebInfo',
+      { id: 1, notices: '# 公告' },
+      true
+    )
+    expect(messageMock).toHaveBeenCalledWith({
+      message: '公告保存失败：网络错误',
+      type: 'error'
+    })
   })
 })

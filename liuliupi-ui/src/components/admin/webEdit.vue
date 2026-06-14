@@ -399,7 +399,7 @@
                 title: res.data.title || "",
                 cover: res.data.cover || "",
                 url: res.data.url || "",
-                enabled: res.data.enabled === undefined ? true : res.data.enabled
+                enabled: res.data.enabled
               };
             }
           })
@@ -423,29 +423,35 @@
           this.$refs.saveRandomNameInput.$refs.input.focus();
         });
       },
-      saveNotice() {
+      async saveNotice() {
         let noticeParam = {
           id: this.webInfo.id,
           notices: this.webInfo.notices
         };
 
-        Promise.all([
-          this.$http.post(this.$constant.baseURL + "/webInfo/updateWebInfo", noticeParam, true),
-          this.$http.post(this.$constant.baseURL + "/pushNotification/admin/savePushNotification", this.pushNotification, true)
-        ])
-          .then(() => {
-            this.getWebInfo();
-            this.$message({
-              message: "保存成功！",
-              type: "success"
-            });
-          })
-          .catch((error) => {
-            this.$message({
-              message: error.message,
-              type: "error"
-            });
+        try {
+          await this.$http.post(this.$constant.baseURL + "/webInfo/updateWebInfo", noticeParam, true);
+        } catch (error) {
+          this.$message({
+            message: "公告保存失败：" + error.message,
+            type: "error"
           });
+          return;
+        }
+
+        try {
+          await this.$http.post(this.$constant.baseURL + "/pushNotification/admin/savePushNotification", this.pushNotification, true);
+          this.getWebInfo();
+          this.$message({
+            message: "保存成功！",
+            type: "success"
+          });
+        } catch (error) {
+          this.$message({
+            message: "推送设置保存失败：" + error.message,
+            type: "error"
+          });
+        }
       },
       saveRandomResources() {
         this.updateWebInfo({
