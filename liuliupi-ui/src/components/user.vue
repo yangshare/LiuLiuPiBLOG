@@ -726,7 +726,7 @@
     outline: none;
   }
 
-  .login-captcha {
+  .form-container .login-captcha {
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -735,14 +735,19 @@
     width: 100%;
   }
 
-  .login-captcha input {
+  .form-container .login-captcha input {
     flex: 1;
+    min-width: 0;
+    margin: 10px 0;
+    width: auto;
   }
 
   .login-captcha-img {
+    flex: 0 0 110px;
     width: 110px;
     height: 40px;
     margin-left: 10px;
+    object-fit: cover;
     cursor: pointer;
     border-radius: 4px;
   }
