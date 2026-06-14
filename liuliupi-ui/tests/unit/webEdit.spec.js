@@ -89,4 +89,30 @@ describe('webEdit.vue', () => {
     const addLinkButtons = buttons.filter(b => b.text() === '添加图片链接')
     expect(addLinkButtons).toHaveLength(2)
   })
+
+  it('opens add url dialog when add image link button clicked', async () => {
+    const wrapper = shallowMount(WebEdit, {
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture'
+      ]
+    })
+    const buttons = wrapper.findAll('el-button-stub')
+    const addLinkButton = buttons.filter(b => b.text() === '添加图片链接').at(0)
+    addLinkButton.vm.$emit('click')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.addUrlDialogVisible).toBe(true)
+    expect(wrapper.vm.addUrlType).toBe('avatar')
+  })
 })
