@@ -162,12 +162,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return null 表示校验通过；非 null 表示错误提示信息
      */
     static String verifyCaptcha(String captchaToken, String code) {
-        // 1. 取出缓存的验证码文本
-        String cachedCode = (String) PoetryCache.get(CommonConst.CAPTCHA_KEY + captchaToken);
-        // 2. 一次性消费：无论对错立即删除
-        PoetryCache.remove(CommonConst.CAPTCHA_KEY + captchaToken);
-        // 3. 校验
-        if (!StringUtils.hasText(captchaToken) || cachedCode == null) {
+        if (!StringUtils.hasText(captchaToken)) {
+            return "验证码已失效，请刷新！";
+        }
+        // remove 返回被删除的值；用它完成原子消费，避免并发请求复用同一验证码。
+        String cachedCode = (String) PoetryCache.remove(CommonConst.CAPTCHA_KEY + captchaToken);
+        if (cachedCode == null) {
             return "验证码已失效，请刷新！";
         }
         if (!cachedCode.equalsIgnoreCase(code)) {

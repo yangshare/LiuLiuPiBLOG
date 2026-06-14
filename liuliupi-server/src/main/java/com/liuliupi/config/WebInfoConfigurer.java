@@ -10,6 +10,6 @@ public class WebInfoConfigurer implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new WebInfoHandlerInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/user/login", "/admin/**", "/webInfo/getWebInfo", "/webInfo/updateWebInfo");
+                .excludePathPatterns("/user/captcha", "/user/login", "/admin/**", "/webInfo/getWebInfo", "/webInfo/updateWebInfo");
     }
 }

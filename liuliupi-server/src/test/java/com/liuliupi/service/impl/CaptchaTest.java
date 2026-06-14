@@ -7,6 +7,15 @@ import com.liuliupi.vo.CaptchaVO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CaptchaTest {
@@ -75,5 +84,41 @@ class CaptchaTest {
         // 第二次即使传正确码，token 已被删 → 已失效
         String error = UserServiceImpl.verifyCaptcha(FIXED_TOKEN, "ABCD");
         assertThat(error).isEqualTo("验证码已失效，请刷新！");
+    }
+
+    /** 一次性消费必须是原子操作：并发使用同一 token 时，最多只有一个请求可通过 */
+    @Test
+    void verifyConsumesTokenAtomicallyWhenRequestsRace() throws InterruptedException {
+        PoetryCache.put(CommonConst.CAPTCHA_KEY + FIXED_TOKEN, "ABCD", CommonConst.CAPTCHA_EXPIRE);
+
+        int requestCount = 32;
+        ExecutorService executor = Executors.newFixedThreadPool(requestCount);
+        CountDownLatch ready = new CountDownLatch(requestCount);
+        CountDownLatch start = new CountDownLatch(1);
+        List<String> errors = Collections.synchronizedList(IntStream.range(0, requestCount)
+                .mapToObj(i -> "")
+                .collect(Collectors.toList()));
+
+        for (int i = 0; i < requestCount; i++) {
+            int index = i;
+            executor.submit(() -> {
+                ready.countDown();
+                try {
+                    start.await();
+                    errors.set(index, UserServiceImpl.verifyCaptcha(FIXED_TOKEN, "ABCD"));
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    errors.set(index, e.getMessage());
+                }
+            });
+        }
+
+        assertThat(ready.await(5, TimeUnit.SECONDS)).isTrue();
+        start.countDown();
+        executor.shutdown();
+        assertThat(executor.awaitTermination(5, TimeUnit.SECONDS)).isTrue();
+
+        assertThat(errors).filteredOn(error -> error == null).hasSize(1);
+        assertThat(errors).filteredOn("验证码已失效，请刷新！"::equals).hasSize(requestCount - 1);
     }
 }

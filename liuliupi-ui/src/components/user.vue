@@ -729,6 +729,9 @@
   .login-captcha {
     display: flex;
     align-items: center;
+    flex-direction: row;
+    height: auto;
+    padding: 0;
     width: 100%;
   }
 
