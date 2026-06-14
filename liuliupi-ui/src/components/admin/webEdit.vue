@@ -125,16 +125,16 @@
             </div>
           </div>
 
-          <el-input
-            class="input-new-tag"
-            v-if="inputRandomAvatarVisible"
-            v-model="inputRandomAvatarValue"
-            ref="saveRandomAvatarInput"
+          <el-button
+            class="button-new-tag"
             size="small"
-            @keyup.enter.native="handleInputRandomAvatarConfirm"
-            @blur="handleInputRandomAvatarConfirm">
-          </el-input>
-          <el-button v-else class="button-new-tag" size="small" @click="showRandomAvatarInput">+ 随机头像</el-button>
+            type="primary"
+            plain
+            icon="el-icon-link"
+            @click="showAddUrlDialog('avatar')"
+          >
+            添加图片链接
+          </el-button>
           <uploadPicture prefix="randomAvatar" style="margin: 10px" @addPicture="addRandomAvatar"
                          :maxSize="1"
                          :maxNumber="5"></uploadPicture>
@@ -160,16 +160,16 @@
             </div>
           </div>
 
-          <el-input
-            class="input-new-tag"
-            v-if="inputRandomCoverVisible"
-            v-model="inputRandomCoverValue"
-            ref="saveRandomCoverInput"
+          <el-button
+            class="button-new-tag"
             size="small"
-            @keyup.enter.native="handleInputRandomCoverConfirm"
-            @blur="handleInputRandomCoverConfirm">
-          </el-input>
-          <el-button v-else class="button-new-tag" size="small" @click="showRandomCoverInput">+ 随机封面</el-button>
+            type="primary"
+            plain
+            icon="el-icon-link"
+            @click="showAddUrlDialog('cover')"
+          >
+            添加图片链接
+          </el-button>
           <uploadPicture prefix="randomCover" style="margin: 10px" @addPicture="addRandomCover"
                          :maxSize="2"
                          :maxNumber="5"></uploadPicture>

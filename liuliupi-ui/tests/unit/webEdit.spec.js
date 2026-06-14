@@ -66,4 +66,27 @@ describe('webEdit.vue', () => {
     wrapper.vm.showAddUrlDialog('cover')
     expect(wrapper.vm.addUrlType).toBe('cover')
   })
+
+  it('renders add image link buttons in random resource cards', () => {
+    const wrapper = shallowMount(WebEdit, {
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture'
+      ]
+    })
+    const buttons = wrapper.findAll('el-button-stub')
+    const addLinkButtons = buttons.filter(b => b.text() === '添加图片链接')
+    expect(addLinkButtons).toHaveLength(2)
+  })
 })
