@@ -406,54 +406,8 @@ describe('webEdit.vue', () => {
 
   it('saveNotice calls both updateWebInfo and savePushNotification', async () => {
     const postMock = jest.fn().mockResolvedValue({})
-    const wrapper = shallowMount(WebEdit, {
-      data() {
-        return {
-          webInfo: { id: 1, notices: '# 公告' },
-          pushNotification: { title: '推送', cover: '', url: '', enabled: true }
-        }
-      },
-      mocks: {
-        $http: { post: postMock, get: jest.fn() },
-        $constant: { baseURL: 'http://localhost:8080' },
-        $message: jest.fn()
-      },
-      stubs: [
-        'el-tabs',
-        'el-tab-pane',
-        'el-form',
-        'el-form-item',
-        'el-input',
-        'el-switch',
-        'el-button',
-        'el-card',
-        'el-tag',
-        'el-image',
-        'el-dialog',
-        'ImageUrlInput',
-        'uploadPicture',
-        'mavon-editor'
-      ]
-    })
-
-    await wrapper.vm.saveNotice()
-
-    expect(postMock).toHaveBeenCalledWith(
-      'http://localhost:8080/webInfo/updateWebInfo',
-      { id: 1, notices: '# 公告' },
-      true
-    )
-    expect(postMock).toHaveBeenCalledWith(
-      'http://localhost:8080/pushNotification/admin/savePushNotification',
-      { title: '推送', cover: '', url: '', enabled: true },
-      true
-    )
-  })
-
-  it('saveNotice stops and shows error when updateWebInfo fails', async () => {
-    const postMock = jest.fn()
-      .mockRejectedValueOnce(new Error('网络错误'))
     const messageMock = jest.fn()
+    const getWebInfoMock = jest.fn()
     const wrapper = shallowMount(WebEdit, {
       data() {
         return {
@@ -483,6 +437,62 @@ describe('webEdit.vue', () => {
         'mavon-editor'
       ]
     })
+    wrapper.vm.getWebInfo = getWebInfoMock
+
+    await wrapper.vm.saveNotice()
+
+    expect(postMock).toHaveBeenCalledWith(
+      'http://localhost:8080/webInfo/updateWebInfo',
+      { id: 1, notices: '# 公告' },
+      true
+    )
+    expect(postMock).toHaveBeenCalledWith(
+      'http://localhost:8080/pushNotification/admin/savePushNotification',
+      { title: '推送', cover: '', url: '', enabled: true },
+      true
+    )
+    expect(messageMock).toHaveBeenCalledWith({
+      message: '保存成功！',
+      type: 'success'
+    })
+    expect(getWebInfoMock).toHaveBeenCalled()
+  })
+
+  it('saveNotice stops and shows error when updateWebInfo fails', async () => {
+    const postMock = jest.fn()
+      .mockRejectedValueOnce(new Error('网络错误'))
+    const messageMock = jest.fn()
+    const getWebInfoMock = jest.fn()
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          webInfo: { id: 1, notices: '# 公告' },
+          pushNotification: { title: '推送', cover: '', url: '', enabled: true }
+        }
+      },
+      mocks: {
+        $http: { post: postMock, get: jest.fn() },
+        $constant: { baseURL: 'http://localhost:8080' },
+        $message: messageMock
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture',
+        'mavon-editor'
+      ]
+    })
+    wrapper.vm.getWebInfo = getWebInfoMock
 
     await wrapper.vm.saveNotice()
 
@@ -496,5 +506,63 @@ describe('webEdit.vue', () => {
       message: '公告保存失败：网络错误',
       type: 'error'
     })
+    expect(getWebInfoMock).not.toHaveBeenCalled()
+  })
+
+  it('saveNotice shows error when savePushNotification fails', async () => {
+    const postMock = jest.fn()
+      .mockResolvedValueOnce({})
+      .mockRejectedValueOnce(new Error('保存失败'))
+    const messageMock = jest.fn()
+    const getWebInfoMock = jest.fn()
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          webInfo: { id: 1, notices: '# 公告' },
+          pushNotification: { title: '推送', cover: '', url: '', enabled: true }
+        }
+      },
+      mocks: {
+        $http: { post: postMock, get: jest.fn() },
+        $constant: { baseURL: 'http://localhost:8080' },
+        $message: messageMock
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture',
+        'mavon-editor'
+      ]
+    })
+    wrapper.vm.getWebInfo = getWebInfoMock
+
+    await wrapper.vm.saveNotice()
+
+    expect(postMock).toHaveBeenCalledTimes(2)
+    expect(postMock).toHaveBeenCalledWith(
+      'http://localhost:8080/webInfo/updateWebInfo',
+      { id: 1, notices: '# 公告' },
+      true
+    )
+    expect(postMock).toHaveBeenCalledWith(
+      'http://localhost:8080/pushNotification/admin/savePushNotification',
+      { title: '推送', cover: '', url: '', enabled: true },
+      true
+    )
+    expect(messageMock).toHaveBeenCalledWith({
+      message: '推送设置保存失败：保存失败',
+      type: 'error'
+    })
+    expect(getWebInfoMock).not.toHaveBeenCalled()
   })
 })
