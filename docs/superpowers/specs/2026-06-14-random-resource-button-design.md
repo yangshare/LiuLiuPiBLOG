@@ -125,7 +125,7 @@ showAddUrlDialog(type) {
 
 - 非空。
 - URL 以 `http://` 或 `https://` 开头。
-- 可选：后缀为常见图片格式（`jpg|jpeg|png|gif|webp|svg`）。
+- 后缀为常见图片格式之一（`jpg|jpeg|png|gif|webp|svg`）。
 
 校验失败时，弹窗内 `el-form-item` 显示红色错误信息。
 
