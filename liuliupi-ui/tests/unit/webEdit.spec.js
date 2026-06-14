@@ -182,4 +182,43 @@ describe('webEdit.vue', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.randomCover).toEqual(['https://example.com/cover.png'])
   })
+
+  it.each([
+    [''],
+    ['not-a-url'],
+    ['ftp://example.com/avatar.jpg'],
+    ['https://example.com/avatar.txt']
+  ])('does not add invalid url "%s" and keeps dialog open', async (url) => {
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          randomAvatar: [],
+          randomCover: [],
+          addUrlType: 'avatar',
+          addUrlValue: url,
+          addUrlDialogVisible: true
+        }
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture'
+      ]
+    })
+    wrapper.vm.confirmAddUrl()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.randomAvatar).toEqual([])
+    expect(wrapper.vm.addUrlDialogVisible).toBe(true)
+    expect(wrapper.vm.addUrlError).toBe('请输入有效的图片链接')
+  })
 })
