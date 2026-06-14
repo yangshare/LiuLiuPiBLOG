@@ -221,4 +221,33 @@ describe('webEdit.vue', () => {
     expect(wrapper.vm.addUrlDialogVisible).toBe(true)
     expect(wrapper.vm.addUrlError).toBe('请输入有效的图片链接')
   })
+
+  it('keeps input value when dialog is cancelled', async () => {
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          addUrlValue: 'https://example.com/keep.jpg',
+          addUrlDialogVisible: true
+        }
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture'
+      ]
+    })
+    wrapper.vm.addUrlDialogVisible = false
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.addUrlValue).toBe('https://example.com/keep.jpg')
+  })
 })
