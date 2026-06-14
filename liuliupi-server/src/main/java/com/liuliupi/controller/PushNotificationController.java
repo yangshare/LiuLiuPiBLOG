@@ -5,6 +5,7 @@ import com.liuliupi.config.PoetryResult;
 import com.liuliupi.entity.PushNotification;
 import com.liuliupi.service.PushNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,6 +50,9 @@ public class PushNotificationController {
     @PostMapping("/admin/savePushNotification")
     @LoginCheck(0)
     public PoetryResult<Void> savePushNotification(@RequestBody PushNotification pushNotification) {
+        if (!StringUtils.hasText(pushNotification.getTitle())) {
+            return PoetryResult.fail("推送标题不能为空");
+        }
         pushNotificationService.saveOrUpdateSingle(pushNotification);
         return PoetryResult.success();
     }

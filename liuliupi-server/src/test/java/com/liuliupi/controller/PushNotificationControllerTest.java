@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class PushNotificationControllerTest {
+public class PushNotificationControllerTest {
 
     @Mock
     private PushNotificationService pushNotificationService;
@@ -56,7 +56,32 @@ class PushNotificationControllerTest {
 
         PoetryResult<PushNotification> result = controller.getAdminPushNotification();
 
+        assertThat(result.getCode()).isEqualTo(200);
         assertThat(result.getData()).isEqualTo(push);
+    }
+
+    @Test
+    void savePushNotificationShouldFailWhenTitleIsEmpty() {
+        PushNotification push = new PushNotification();
+        push.setTitle("");
+
+        PoetryResult<Void> result = controller.savePushNotification(push);
+
+        assertThat(result.getCode()).isEqualTo(500);
+        assertThat(result.getMessage()).isEqualTo("推送标题不能为空");
+        verify(pushNotificationService, never()).saveOrUpdateSingle(any());
+    }
+
+    @Test
+    void savePushNotificationShouldFailWhenTitleIsNull() {
+        PushNotification push = new PushNotification();
+        push.setTitle(null);
+
+        PoetryResult<Void> result = controller.savePushNotification(push);
+
+        assertThat(result.getCode()).isEqualTo(500);
+        assertThat(result.getMessage()).isEqualTo("推送标题不能为空");
+        verify(pushNotificationService, never()).saveOrUpdateSingle(any());
     }
 
     @Test
