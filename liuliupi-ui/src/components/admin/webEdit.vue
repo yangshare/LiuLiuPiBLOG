@@ -107,22 +107,21 @@
 
         <el-card class="random-resource-card">
           <div slot="header">随机头像</div>
-          <div :key="i"
-               style="display: flex"
-               v-for="(avatar, i) in randomAvatar">
-            <el-tag
-              style="white-space: normal;height: unset"
-              closable
-              :disable-transitions="false"
-              @close="handleClose(randomAvatar, avatar)">
-              {{avatar}}
-            </el-tag>
-            <div>
-              <el-image lazy class="table-td-thumb"
-                        style="margin: 10px"
+          <div class="random-image-grid">
+            <div :key="i"
+                 class="random-image-item"
+                 v-for="(avatar, i) in randomAvatar">
+              <el-image lazy class="random-image-thumb"
                         :preview-src-list="[avatar]"
                         :src="avatar"
                         fit="cover"></el-image>
+              <el-tag
+                class="random-image-url"
+                closable
+                :disable-transitions="false"
+                @close="handleClose(randomAvatar, avatar)">
+                {{avatar}}
+              </el-tag>
             </div>
           </div>
 
@@ -143,22 +142,21 @@
 
         <el-card class="random-resource-card">
           <div slot="header">随机封面</div>
-          <div :key="i"
-               style="display: flex"
-               v-for="(cover, i) in randomCover">
-            <el-tag
-              style="white-space: normal;height: unset"
-              closable
-              :disable-transitions="false"
-              @close="handleClose(randomCover, cover)">
-              {{cover}}
-            </el-tag>
-            <div>
-              <el-image lazy class="table-td-thumb"
-                        style="margin: 10px"
+          <div class="random-image-grid">
+            <div :key="i"
+                 class="random-image-item"
+                 v-for="(cover, i) in randomCover">
+              <el-image lazy class="random-image-thumb"
                         :preview-src-list="[cover]"
                         :src="cover"
                         fit="cover"></el-image>
+              <el-tag
+                class="random-image-url"
+                closable
+                :disable-transitions="false"
+                @close="handleClose(randomCover, cover)">
+                {{cover}}
+              </el-tag>
             </div>
           </div>
 
@@ -207,6 +205,10 @@
         inputRandomAvatarValue: "",
         inputRandomCoverVisible: false,
         inputRandomCoverValue: "",
+        addUrlType: '', // 'avatar' | 'cover'
+        addUrlDialogVisible: false,
+        addUrlValue: '',
+        addUrlError: '',
         webInfo: {
           id: null,
           webName: "",
@@ -263,6 +265,10 @@
       },
       addRandomCover(res) {
         this.randomCover.push(res);
+      },
+      showAddUrlDialog(type) {
+        this.addUrlType = type
+        this.addUrlDialogVisible = true
       },
       changeWebStatus(webInfo) {
         this.$http.post(this.$constant.baseURL + "/webInfo/updateWebInfo", {
@@ -442,6 +448,37 @@
 
   .random-resource-card:last-of-type {
     margin-bottom: 0;
+  }
+
+  .random-image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 10px;
+  }
+
+  .random-image-item {
+    min-width: 0;
+    border: 1px solid #ebeef5;
+    border-radius: 4px;
+    padding: 10px;
+    background: #ffffff;
+  }
+
+  .random-image-thumb {
+    width: 100%;
+    height: 120px;
+    border-radius: 2px;
+    border: 1px solid #e4e7ed;
+  }
+
+  .random-image-url {
+    display: flex;
+    align-items: center;
+    margin: 10px 0 0;
+    white-space: normal;
+    height: auto;
+    word-break: break-all;
   }
 
   .el-tag {

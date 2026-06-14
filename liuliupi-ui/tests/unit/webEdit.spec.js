@@ -1,0 +1,69 @@
+import { shallowMount } from '@vue/test-utils'
+import WebEdit from '@/components/admin/webEdit.vue'
+
+describe('webEdit.vue', () => {
+  let getWebInfoSpy
+
+  beforeEach(() => {
+    getWebInfoSpy = jest.spyOn(WebEdit.methods, 'getWebInfo').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    getWebInfoSpy.mockRestore()
+  })
+
+  it('renders random image resources as grids', () => {
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          randomAvatar: ['https://example.com/avatar.jpg'],
+          randomCover: ['https://example.com/cover.jpg']
+        }
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'ImageUrlInput',
+        'uploadPicture'
+      ]
+    })
+
+    const grids = wrapper.findAll('.random-image-grid')
+    expect(grids).toHaveLength(2)
+    expect(wrapper.findAll('.random-image-item')).toHaveLength(2)
+  })
+
+  it('opens add url dialog with correct type', () => {
+    const wrapper = shallowMount(WebEdit, {
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture'
+      ]
+    })
+    wrapper.vm.showAddUrlDialog('avatar')
+    expect(wrapper.vm.addUrlType).toBe('avatar')
+    expect(wrapper.vm.addUrlDialogVisible).toBe(true)
+
+    wrapper.vm.showAddUrlDialog('cover')
+    expect(wrapper.vm.addUrlType).toBe('cover')
+  })
+})
