@@ -151,14 +151,16 @@ DROP TABLE IF EXISTS `liuliupi_blog`.`push_notification`;
 
 CREATE TABLE `liuliupi_blog`.`push_notification` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `singleton_key` tinyint NOT NULL DEFAULT 1 COMMENT '单条记录约束',
   `title` varchar(200) DEFAULT NULL COMMENT '推送标题',
   `cover` varchar(500) DEFAULT NULL COMMENT '封面图 URL',
   `url` varchar(500) DEFAULT NULL COMMENT '点击跳转链接',
-  `enabled` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否启用[0:否，1:是]',
+  `enabled` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否启用[0:否，1:是]',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最终修改时间',
 
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_push_notification_singleton` (`singleton_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='首页弹窗推送配置表';
 
 DROP TABLE IF EXISTS `liuliupi_blog`.`resource_path`;

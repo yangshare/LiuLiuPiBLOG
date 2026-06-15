@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { mount } from '@vue/test-utils'
 import Index from '@/components/index.vue'
 
@@ -60,6 +61,29 @@ describe('index.vue', () => {
     const wrapper = createWrapper()
     expect(wrapper.find('.announcement-board').exists()).toBe(true)
     expect(wrapper.find('.announcement-body').exists()).toBe(true)
+  })
+
+  it('rerenders notice when webInfo notices are loaded asynchronously', async () => {
+    const state = Vue.observable({
+      webInfo: {
+        notices: '',
+        backgroundImage: 'https://example.com/bg.jpg',
+        randomCover: ['https://example.com/cover1.jpg']
+      },
+      sortInfo: []
+    })
+    const wrapper = createWrapper({
+      mocks: {
+        $store: { state }
+      }
+    })
+
+    expect(wrapper.vm.noticeHtml).toBe('')
+
+    state.webInfo.notices = '# 异步公告'
+    await Vue.nextTick()
+
+    expect(wrapper.vm.noticeHtml).toContain('<h1>异步公告</h1>')
   })
 
   it('renders raw text when markdown render throws', () => {

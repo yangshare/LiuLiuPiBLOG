@@ -211,7 +211,11 @@
       };
     },
 
-    watch: {},
+    watch: {
+      '$store.state.webInfo.notices'() {
+        this.renderNotice();
+      }
+    },
 
     created() {
       this.renderNotice();
@@ -250,7 +254,7 @@
     methods: {
       renderNotice() {
         const raw = this.$store.state.webInfo.notices;
-        const notices = Array.isArray(raw) ? raw.join('\n') : (raw || '');
+        const notices = typeof raw === 'string' ? raw : (raw ? String(raw) : '');
         try {
           const md = new MarkdownIt({ breaks: true });
           this.noticeHtml = md.render(notices);
@@ -271,7 +275,7 @@
         await this.getArticles();
         this.$nextTick(() => {
           this.indexType = 2;
-          $(".announcement").css("max-width", "780px");
+          $(".announcement-board").css("max-width", "780px");
           document.querySelector('.recent-posts').scrollIntoView({
             behavior: "smooth",
             block: "start",
@@ -292,7 +296,7 @@
         await this.getArticles();
         this.$nextTick(() => {
           this.indexType = 2;
-          $(".announcement").css("max-width", "780px");
+          $(".announcement-board").css("max-width", "780px");
           document.querySelector('.recent-posts').scrollIntoView({
             behavior: "smooth",
             block: "start",
@@ -483,27 +487,6 @@
 
   .recent-posts {
     width: 70%;
-  }
-
-  .announcement {
-    padding: 22px;
-    border: 1px dashed var(--lightGray);
-    color: var(--greyFont);
-    border-radius: 10px;
-    display: flex;
-    margin: 40px auto 40px;
-  }
-
-  .announcement i {
-    color: var(--themeBackground);
-    font-size: 22px;
-    margin: auto 0;
-    animation: scale 0.8s ease-in-out infinite;
-  }
-
-  .announcement div div {
-    margin-left: 20px;
-    line-height: 30px;
   }
 
   .aside-content {

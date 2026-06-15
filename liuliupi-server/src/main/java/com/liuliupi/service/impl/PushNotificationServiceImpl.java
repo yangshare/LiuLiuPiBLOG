@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liuliupi.dao.PushNotificationMapper;
 import com.liuliupi.entity.PushNotification;
 import com.liuliupi.service.PushNotificationService;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -31,15 +33,24 @@ public class PushNotificationServiceImpl extends ServiceImpl<PushNotificationMap
     @Override
     @Transactional(rollbackFor = Exception.class)
     public synchronized void saveOrUpdateSingle(PushNotification pushNotification) {
-        List<PushNotification> list = baseMapper.selectList(new LambdaQueryWrapper<PushNotification>()
-                .orderByAsc(PushNotification::getId)
-                .last("limit 1"));
-        if (CollectionUtils.isEmpty(list)) {
-            baseMapper.insert(pushNotification);
-        } else {
-            pushNotification.setId(list.get(0).getId());
-            baseMapper.updateById(pushNotification);
+        if (pushNotification.getEnabled() == null) {
+            pushNotification.setEnabled(false);
         }
+
+        List<PushNotification> list = listAll();
+        if (CollectionUtils.isEmpty(list)) {
+            try {
+                baseMapper.insert(pushNotification);
+                return;
+            } catch (DuplicateKeyException e) {
+                list = listAll();
+                if (CollectionUtils.isEmpty(list)) {
+                    throw e;
+                }
+            }
+        }
+
+        updateFirstAndDeleteExtras(pushNotification, list);
     }
 
     @Override
@@ -52,5 +63,34 @@ public class PushNotificationServiceImpl extends ServiceImpl<PushNotificationMap
             return null;
         }
         return list.get(0);
+    }
+
+    @Override
+    public PushNotification getSingle() {
+        List<PushNotification> list = baseMapper.selectList(new LambdaQueryWrapper<PushNotification>()
+                .orderByAsc(PushNotification::getId)
+                .last("limit 1"));
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    private List<PushNotification> listAll() {
+        return baseMapper.selectList(new LambdaQueryWrapper<PushNotification>()
+                .orderByAsc(PushNotification::getId));
+    }
+
+    private void updateFirstAndDeleteExtras(PushNotification pushNotification, List<PushNotification> list) {
+        pushNotification.setId(list.get(0).getId());
+        baseMapper.updateById(pushNotification);
+
+        List<Integer> extraIds = list.stream()
+                .skip(1)
+                .map(PushNotification::getId)
+                .collect(Collectors.toList());
+        if (!extraIds.isEmpty()) {
+            baseMapper.deleteBatchIds(extraIds);
+        }
     }
 }

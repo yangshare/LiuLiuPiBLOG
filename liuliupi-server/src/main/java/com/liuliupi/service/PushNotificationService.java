@@ -22,4 +22,9 @@ public interface PushNotificationService extends IService<PushNotification> {
      * 获取当前启用的推送配置
      */
     PushNotification getEnabled();
+
+    /**
+     * 获取当前推送配置（不管是否启用，供后台编辑使用）
+     */
+    PushNotification getSingle();
 }

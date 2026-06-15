@@ -235,7 +235,7 @@
           title: "",
           cover: "",
           url: "",
-          enabled: true
+          enabled: false
         },
         addUrlType: '', // 'avatar' | 'cover'
         addUrlDialogVisible: false,
@@ -392,7 +392,7 @@
         array.splice(array.indexOf(item), 1);
       },
       getPushNotification() {
-        this.$http.get(this.$constant.baseURL + "/pushNotification/admin/getPushNotification", {}, true)
+        return this.$http.get(this.$constant.baseURL + "/pushNotification/admin/getPushNotification", {}, true)
           .then((res) => {
             if (!this.$common.isEmpty(res.data)) {
               this.pushNotification = {

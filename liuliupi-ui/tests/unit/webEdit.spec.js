@@ -1,5 +1,8 @@
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, config } from '@vue/test-utils'
 import WebEdit from '@/components/admin/webEdit.vue'
+
+// mavon-editor 为全局注册的第三方组件，统一 stub 避免每个用例重复声明
+config.stubs['mavon-editor'] = true
 
 describe('webEdit.vue', () => {
   let getWebInfoSpy
@@ -10,6 +13,28 @@ describe('webEdit.vue', () => {
 
   afterEach(() => {
     getWebInfoSpy.mockRestore()
+  })
+
+  it('defaults push notification to disabled before admin config is loaded', () => {
+    const wrapper = shallowMount(WebEdit, {
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture'
+      ]
+    })
+
+    expect(wrapper.vm.pushNotification.enabled).toBe(false)
   })
 
   it('renders random image resources as grids', () => {
@@ -358,8 +383,7 @@ describe('webEdit.vue', () => {
         'el-image',
         'el-dialog',
         'ImageUrlInput',
-        'uploadPicture',
-        'mavon-editor'
+        'uploadPicture'
       ]
     })
 
@@ -393,8 +417,7 @@ describe('webEdit.vue', () => {
         'el-image',
         'el-dialog',
         'ImageUrlInput',
-        'uploadPicture',
-        'mavon-editor'
+        'uploadPicture'
       ]
     })
 
@@ -433,8 +456,7 @@ describe('webEdit.vue', () => {
         'el-image',
         'el-dialog',
         'ImageUrlInput',
-        'uploadPicture',
-        'mavon-editor'
+        'uploadPicture'
       ]
     })
     wrapper.vm.getWebInfo = getWebInfoMock
@@ -488,8 +510,7 @@ describe('webEdit.vue', () => {
         'el-image',
         'el-dialog',
         'ImageUrlInput',
-        'uploadPicture',
-        'mavon-editor'
+        'uploadPicture'
       ]
     })
     wrapper.vm.getWebInfo = getWebInfoMock
@@ -540,8 +561,7 @@ describe('webEdit.vue', () => {
         'el-image',
         'el-dialog',
         'ImageUrlInput',
-        'uploadPicture',
-        'mavon-editor'
+        'uploadPicture'
       ]
     })
     wrapper.vm.getWebInfo = getWebInfoMock
@@ -564,5 +584,49 @@ describe('webEdit.vue', () => {
       type: 'error'
     })
     expect(getWebInfoMock).not.toHaveBeenCalled()
+  })
+
+  it('getPushNotification loads admin push config from admin route', async () => {
+    const getMock = jest.fn().mockResolvedValue({
+      data: {
+        title: '推送',
+        cover: 'https://example.com/cover.jpg',
+        url: 'https://example.com/',
+        enabled: false
+      }
+    })
+    const wrapper = shallowMount(WebEdit, {
+      mocks: {
+        $http: { get: getMock },
+        $constant: { baseURL: 'http://localhost:8080' },
+        $common: { isEmpty: (value) => value === undefined || value === null || value === '' },
+        $message: jest.fn()
+      },
+      stubs: [
+        'el-tabs',
+        'el-tab-pane',
+        'el-form',
+        'el-form-item',
+        'el-input',
+        'el-switch',
+        'el-button',
+        'el-card',
+        'el-tag',
+        'el-image',
+        'el-dialog',
+        'ImageUrlInput',
+        'uploadPicture'
+      ]
+    })
+
+    await wrapper.vm.getPushNotification()
+    await wrapper.vm.$nextTick()
+
+    expect(getMock).toHaveBeenCalledWith(
+      'http://localhost:8080/pushNotification/admin/getPushNotification',
+      {},
+      true
+    )
+    expect(wrapper.vm.pushNotification.enabled).toBe(false)
   })
 })
