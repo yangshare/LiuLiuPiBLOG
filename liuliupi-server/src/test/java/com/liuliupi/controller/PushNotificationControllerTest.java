@@ -128,8 +128,8 @@ public class PushNotificationControllerTest {
         Method getAdmin = PushNotificationController.class.getMethod("getAdminPushNotification");
         Method saveAdmin = PushNotificationController.class.getMethod("savePushNotification", PushNotification.class);
 
-        assertThat(getPublic.getAnnotation(GetMapping.class).value()).containsExactly("/pushNotification/getPushNotification");
-        assertThat(getAdmin.getAnnotation(GetMapping.class).value()).containsExactly("/admin/pushNotification/getPushNotification");
-        assertThat(saveAdmin.getAnnotation(PostMapping.class).value()).containsExactly("/admin/pushNotification/savePushNotification");
+        assertThat(getPublic.getAnnotation(GetMapping.class).value()).containsExactly("/getPushNotification");
+        assertThat(getAdmin.getAnnotation(GetMapping.class).value()).containsExactly("/admin/getPushNotification");
+        assertThat(saveAdmin.getAnnotation(PostMapping.class).value()).containsExactly("/admin/savePushNotification");
     }
 }
