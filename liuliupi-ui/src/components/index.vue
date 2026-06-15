@@ -249,7 +249,8 @@
 
     methods: {
       renderNotice() {
-        const notices = this.$store.state.webInfo.notices || '';
+        const raw = this.$store.state.webInfo.notices;
+        const notices = Array.isArray(raw) ? raw.join('\n') : (raw || '');
         try {
           const md = new MarkdownIt({ breaks: true });
           this.noticeHtml = md.render(notices);
