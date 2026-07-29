@@ -3,10 +3,7 @@
     <div class="myFooter">
       <div class="footer-title">{{$store.state.webInfo.footer}}</div>
       <div class="icp">
-        本网站由
-        <a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral" target="_blank">
-        <img src="https://oss.yangshare.com/randomAvatar/yangc11725613471072719.png" alt="又拍云" width="45px"/>
-      </a> 提供CDN加速服务 <a href="http://beian.miit.gov.cn/" target="_blank">{{ $store.state.sysConfig.beian }}</a></div>
+        本网站备案号： <a href="http://beian.miit.gov.cn/" target="_blank">{{ $store.state.sysConfig.beian }}</a></div>
     </div>
   </div>
 </template>
