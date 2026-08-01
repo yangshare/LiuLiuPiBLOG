@@ -16,7 +16,9 @@ const createWrapper = (options = {}) => {
     },
     $common: {
       isEmpty: (v) => v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0) || (typeof v === 'object' && Object.keys(v).length === 0),
-      mobile: () => false
+      mobile: () => false,
+      imageSrc: (v) => v || '',
+      applyImagePrefix: (md) => md
     },
     $http: {
       get: jest.fn().mockResolvedValue({ data: null }),

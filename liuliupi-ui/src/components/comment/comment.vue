@@ -33,7 +33,7 @@
            v-for="(item, index) in comments"
            :key="index">
         <!-- 头像 -->
-        <el-avatar shape="square" class="commentInfo-avatar" :size="35" :src="item.avatar"></el-avatar>
+        <el-avatar shape="square" class="commentInfo-avatar" :size="35" :src="$common.imageSrc(item.avatar)"></el-avatar>
 
         <div style="flex: 1;padding-left: 12px">
           <!-- 评论信息 -->
@@ -55,7 +55,7 @@
           <div v-if="!$common.isEmpty(item.childComments) && !$common.isEmpty(item.childComments.records)">
             <div class="commentInfo-detail" v-for="(childItem, i) in item.childComments.records" :key="i">
               <!-- 头像 -->
-              <el-avatar shape="square" class="commentInfo-avatar" :size="30" :src="childItem.avatar"></el-avatar>
+              <el-avatar shape="square" class="commentInfo-avatar" :size="30" :src="$common.imageSrc(childItem.avatar)"></el-avatar>
 
               <div style="flex: 1;padding-left: 12px">
                 <!-- 评论信息 -->

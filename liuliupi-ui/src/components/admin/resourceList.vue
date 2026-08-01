@@ -45,7 +45,7 @@
         <el-table-column label="路径" align="center">
           <template slot-scope="scope">
             <template v-if="!$common.isEmpty(scope.row.mimeType) && scope.row.mimeType.includes('image')">
-              <el-image lazy :preview-src-list="[scope.row.path]" class="table-td-thumb" :src="scope.row.path"
+              <el-image lazy :preview-src-list="[$common.imageSrc(scope.row.path)]" class="table-td-thumb" :src="$common.imageSrc(scope.row.path)"
                         fit="cover"></el-image>
             </template>
             <template v-else>

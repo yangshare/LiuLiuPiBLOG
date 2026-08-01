@@ -3,6 +3,10 @@ import WebEdit from '@/components/admin/webEdit.vue'
 
 // mavon-editor 为全局注册的第三方组件，统一 stub 避免每个用例重复声明
 config.stubs['mavon-editor'] = true
+config.mocks.$common = {
+  isEmpty: (value) => value === undefined || value === null || value === '',
+  imageSrc: (value) => value || ''
+}
 
 describe('webEdit.vue', () => {
   let getWebInfoSpy
@@ -599,7 +603,10 @@ describe('webEdit.vue', () => {
       mocks: {
         $http: { get: getMock },
         $constant: { baseURL: 'http://localhost:8080' },
-        $common: { isEmpty: (value) => value === undefined || value === null || value === '' },
+        $common: {
+          isEmpty: (value) => value === undefined || value === null || value === '',
+          imageSrc: (value) => value || ''
+        },
         $message: jest.fn()
       },
       stubs: [

@@ -148,7 +148,7 @@
         if (this.storeType === "local") {
           url = response.data;
         } else if (this.storeType === "qiniu") {
-          url = this.$store.state.sysConfig['qiniu.downloadUrl'] + response.key;
+          url = response.key;
           this.$common.saveResource(this, this.prefix, url, file.size, file.raw.type, file.name, "qiniu");
         }
         this.$emit("addPicture", url);

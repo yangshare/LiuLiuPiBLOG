@@ -309,7 +309,7 @@
                 .then((res) => {
                   if (!this.$common.isEmpty(res.key)) {
                     this.clearContext();
-                    let url = this.$store.state.sysConfig['qiniu.downloadUrl'] + res.key;
+                    let url = res.key;
                     let file = fd.get("file");
                     this.$common.saveResource(this, "graffiti", url, file.size, file.type, null, "qiniu");
                     let img = "[你画我猜," + url + "]";

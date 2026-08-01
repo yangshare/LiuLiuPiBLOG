@@ -17,19 +17,19 @@
 
         <el-table-column label="背景封面" align="center">
           <template slot-scope="scope">
-            <el-image lazy :preview-src-list="[scope.row.bgCover]" class="table-td-thumb" :src="scope.row.bgCover"
+            <el-image lazy :preview-src-list="[$common.imageSrc(scope.row.bgCover)]" class="table-td-thumb" :src="$common.imageSrc(scope.row.bgCover)"
                       fit="cover"></el-image>
           </template>
         </el-table-column>
         <el-table-column label="男生头像" align="center">
           <template slot-scope="scope">
-            <el-image lazy :preview-src-list="[scope.row.manCover]" class="table-td-thumb" :src="scope.row.manCover"
+            <el-image lazy :preview-src-list="[$common.imageSrc(scope.row.manCover)]" class="table-td-thumb" :src="$common.imageSrc(scope.row.manCover)"
                       fit="cover"></el-image>
           </template>
         </el-table-column>
         <el-table-column label="女生头像" align="center">
           <template slot-scope="scope">
-            <el-image lazy :preview-src-list="[scope.row.womanCover]" class="table-td-thumb" :src="scope.row.womanCover"
+            <el-image lazy :preview-src-list="[$common.imageSrc(scope.row.womanCover)]" class="table-td-thumb" :src="$common.imageSrc(scope.row.womanCover)"
                       fit="cover"></el-image>
           </template>
         </el-table-column>

@@ -48,7 +48,7 @@
                 <el-avatar class="funny-avatar myCenter" :size="110"
                            style="margin: 20px"
                            @click.native="playSound(funny.url, item.data, i)"
-                           :src="funny.cover">
+                           :src="$common.imageSrc(funny.cover)">
                 </el-avatar>
                 <div class="funny-item-title">{{funny.title}}</div>
               </div>

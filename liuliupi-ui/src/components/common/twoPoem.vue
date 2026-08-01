@@ -6,7 +6,7 @@
               style="position: absolute;margin-top: -50px"
               v-once
               lazy
-              :src="$store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)]"
+              :src="$common.imageSrc($store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)])"
               fit="cover">
       <div slot="error" class="image-slot"></div>
     </el-image>

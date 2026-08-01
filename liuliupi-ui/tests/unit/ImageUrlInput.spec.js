@@ -11,6 +11,7 @@ describe('ImageUrlInput.vue', () => {
   it('renders input, thumb and upload button', () => {
     const wrapper = shallowMount(ImageUrlInput, {
       propsData: { value: 'https://example.com/bg.jpg' },
+      mocks: { $common: { imageSrc: (value) => value || '' } },
       stubs: ['el-input', 'el-image', 'el-button', 'el-dialog', 'upload-picture']
     })
     expect(wrapper.find('.image-url-input').exists()).toBe(true)
@@ -22,6 +23,7 @@ describe('ImageUrlInput.vue', () => {
   it('emits input event when url changes', async () => {
     const wrapper = shallowMount(ImageUrlInput, {
       propsData: { value: '' },
+      mocks: { $common: { imageSrc: (value) => value || '' } },
       stubs: ['el-input', 'el-image', 'el-button', 'el-dialog', 'upload-picture']
     })
     wrapper.find('el-input-stub').vm.$emit('input', 'https://example.com/new.jpg')
@@ -33,6 +35,7 @@ describe('ImageUrlInput.vue', () => {
   it('emits input event when upload succeeds', async () => {
     const wrapper = shallowMount(ImageUrlInput, {
       propsData: { value: '' },
+      mocks: { $common: { imageSrc: (value) => value || '' } },
       stubs: ['el-input', 'el-image', 'el-button', 'el-dialog', 'upload-picture']
     })
     wrapper.find('upload-picture-stub').vm.$emit('addPicture', 'https://example.com/uploaded.jpg')
@@ -44,6 +47,7 @@ describe('ImageUrlInput.vue', () => {
   it('passes upload options to upload picture component', () => {
     const wrapper = shallowMount(ImageUrlInput, {
       propsData: { value: '' },
+      mocks: { $common: { imageSrc: (value) => value || '' } },
       attrs: {
         prefix: 'webAvatar',
         maxSize: 2,

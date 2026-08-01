@@ -37,7 +37,7 @@
         </el-table-column>
         <el-table-column label="头像" align="center">
           <template slot-scope="scope">
-            <el-image lazy class="table-td-thumb" :src="scope.row.avatar" fit="cover"></el-image>
+            <el-image lazy class="table-td-thumb" :src="$common.imageSrc(scope.row.avatar)" fit="cover"></el-image>
           </template>
         </el-table-column>
         <el-table-column label="性别" align="center">

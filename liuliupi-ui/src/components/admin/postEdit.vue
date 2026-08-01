@@ -68,7 +68,7 @@
                     lazy
                     style="margin-left: 10px"
                     :preview-src-list="[article.articleCover]"
-                    :src="article.articleCover"
+                    :src="$common.imageSrc(article.articleCover)"
                     fit="cover"></el-image>
         </div>
         <uploadPicture prefix="articleCover" style="margin-top: 10px" @addPicture="addArticleCover"
@@ -227,7 +227,7 @@
               this.$http.uploadQiniu(this.$store.state.sysConfig.qiniuUrl, fd)
                 .then((res) => {
                   if (!this.$common.isEmpty(res.key)) {
-                    let url = this.$store.state.sysConfig['qiniu.downloadUrl'] + res.key;
+                    let url = res.key;
                     let file = fd.get("file");
                     this.$common.saveResource(this, "articlePicture", url, file.size, file.type, file.name, "qiniu", true);
                     this.$refs.md.$img2Url(pos, url);

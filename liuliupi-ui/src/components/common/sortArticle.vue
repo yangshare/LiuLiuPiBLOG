@@ -9,7 +9,7 @@
         <el-image class="my-el-image"
                   v-once
                   lazy
-                  :src="article.articleCover"
+                  :src="$common.imageSrc(article.articleCover)"
                   fit="cover">
           <div slot="error" class="image-slot myCenter" style="background-color: var(--lightGreen)">
             <div class="error-text">

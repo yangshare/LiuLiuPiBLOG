@@ -8,7 +8,7 @@
                   v-once
                   lazy
                   :preview-src-list="[resourcePath.cover]"
-                  :src="resourcePath.cover"
+                  :src="$common.imageSrc(resourcePath.cover)"
                   fit="cover">
           <div slot="error" class="image-slot"></div>
         </el-image>

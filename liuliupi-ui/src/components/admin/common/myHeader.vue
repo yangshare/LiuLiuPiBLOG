@@ -27,7 +27,7 @@
       <div class="header-user-con">
         <el-dropdown placement="bottom">
           <el-avatar class="user-avatar" :size="40"
-                     :src="$store.state.currentUser.avatar">
+                     :src="$common.imageSrc($store.state.currentUser.avatar)">
           </el-avatar>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="logout()">退出</el-dropdown-item>

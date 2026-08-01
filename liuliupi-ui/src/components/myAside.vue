@@ -3,7 +3,7 @@
     <div class="myAside-container">
       <!-- 网站信息 -->
       <div v-if="!$common.mobile()" class="card-content1 shadow-box background-opacity">
-        <el-avatar style="margin-top: 20px" class="user-avatar" :size="120" :src="webInfo.avatar"></el-avatar>
+        <el-avatar style="margin-top: 20px" class="user-avatar" :size="120" :src="$common.imageSrc(webInfo.avatar)"></el-avatar>
         <div class="web-name">{{webInfo.webName}}</div>
         <div class="web-info">
           <div class="blog-info-box">
@@ -59,7 +59,7 @@
              @click="$router.push({path: `/article/${article.id}`})">
           <div class="aside-post-detail">
             <div class="aside-post-image">
-              <el-image lazy class="my-el-image" :src="article.articleCover" fit="cover">
+              <el-image lazy class="my-el-image" :src="$common.imageSrc(article.articleCover)" fit="cover">
                 <div slot="error" class="image-slot">
                   <div class="error-aside-image">
                     {{article.username}}
@@ -130,7 +130,7 @@
                  style="display: flex;justify-content: space-between"
                  :key="i">
               <div style="display: flex">
-                <el-avatar style="margin-bottom: 10px" :size="36" :src="item.avatar"></el-avatar>
+                <el-avatar style="margin-bottom: 10px" :size="36" :src="$common.imageSrc(item.avatar)"></el-avatar>
                 <div style="margin-left: 10px;height: 36px;line-height: 36px;overflow: hidden;max-width: 80px">
                   {{ item.username }}
                 </div>

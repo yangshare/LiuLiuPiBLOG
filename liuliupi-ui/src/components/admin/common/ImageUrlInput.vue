@@ -8,8 +8,8 @@
     />
     <el-image
       v-if="value"
-      :src="value"
-      :preview-src-list="[value]"
+      :src="$common.imageSrc(value)"
+      :preview-src-list="[$common.imageSrc(value)]"
       fit="cover"
       class="image-url-input-thumb"
     />

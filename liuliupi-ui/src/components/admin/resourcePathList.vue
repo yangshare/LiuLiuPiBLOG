@@ -24,7 +24,7 @@
         <el-table-column prop="introduction" label="简介" align="center"></el-table-column>
         <el-table-column label="封面" align="center">
           <template slot-scope="scope">
-            <el-image lazy :preview-src-list="[scope.row.cover]" class="table-td-thumb" :src="scope.row.cover"
+            <el-image lazy :preview-src-list="[$common.imageSrc(scope.row.cover)]" class="table-td-thumb" :src="$common.imageSrc(scope.row.cover)"
                       fit="cover"></el-image>
           </template>
         </el-table-column>
@@ -101,7 +101,7 @@
           <div class="myCenter">
             <el-radio-group v-model="resourcePath.type">
               <template v-for="item in resourceTypes">
-                <el-radio-button :label="item.value">{{ item.label }}</el-radio-button>
+                <el-radio-button :key="item.value" :label="item.value">{{ item.label }}</el-radio-button>
               </template>
             </el-radio-group>
           </div>

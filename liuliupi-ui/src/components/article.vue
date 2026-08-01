@@ -7,7 +7,7 @@
         <el-image class="article-image my-el-image"
                   v-once
                   lazy
-                  :src="article.articleCover"
+                  :src="$common.imageSrc(article.articleCover)"
                   fit="cover">
           <div slot="error" class="image-slot">
             <div class="article-image"></div>
@@ -118,7 +118,7 @@
         <div class="article-container my-animation-slide-bottom">
           <div v-if="!$common.isEmpty(article.videoUrl)" style="margin-bottom: 20px">
             <videoPlayer :url="{src: $common.decrypt(article.videoUrl)}"
-                         :cover="article.articleCover">
+                         :cover="$common.imageSrc(article.articleCover)">
             </videoPlayer>
           </div>
 
@@ -186,7 +186,7 @@
                class="article-copy"
                center>
       <div style="display: flex;align-items: center;flex-direction: column">
-        <el-avatar shape="square" :size="35" :src="$store.state.webInfo.avatar"></el-avatar>
+        <el-avatar shape="square" :size="35" :src="$common.imageSrc($store.state.webInfo.avatar)"></el-avatar>
         <div class="copyright-container">
           <p>
             {{ $store.state.webInfo.webName }}是指运行在{{ $constant.host }}域名及相关子域名上的网站，本条款描述了{{ $store.state.webInfo.webName }}的网站版权声明：
@@ -340,8 +340,21 @@
           $("#toc-button").css("bottom", "8vh");
         }
       },
+      '$store.state.sysConfig': {
+        deep: true,
+        handler() {
+          if (!this.$common.isEmpty(this.article.articleContent)) {
+            this.renderArticleContent();
+          }
+        }
+      }
     },
     methods: {
+      renderArticleContent() {
+        const md = this.$common.applyImagePrefix(new MarkdownIt({breaks: true}).use(require('markdown-it-multimd-table')));
+        this.articleContentHtml = md.render(this.article.articleContent || '');
+      },
+
       clickTocButton() {
         let display = $(".toc");
         if ("none" === display.css("display")) {
@@ -518,8 +531,7 @@
             if (!this.$common.isEmpty(res.data)) {
               this.article = res.data;
               this.getNews();
-              const md = new MarkdownIt({breaks: true}).use(require('markdown-it-multimd-table'));
-              this.articleContentHtml = md.render(this.article.articleContent);
+               this.renderArticleContent();
               this.$nextTick(() => {
                 this.$common.imgShow(".entry-content img");
                 this.highlight();

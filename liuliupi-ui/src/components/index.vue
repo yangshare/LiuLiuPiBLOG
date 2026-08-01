@@ -14,7 +14,7 @@
                   class="background-image-index"
                   v-once
                   lazy
-                  :src="!$common.isEmpty($store.state.webInfo.backgroundImage)?$store.state.webInfo.backgroundImage:$store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)]"
+                  :src="$common.imageSrc(!$common.isEmpty($store.state.webInfo.backgroundImage)?$store.state.webInfo.backgroundImage:$store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)])"
                   fit="cover">
           <div slot="error" class="image-slot background-image-index-error"></div>
         </el-image>
@@ -117,7 +117,7 @@
 
         <el-image class="push-el-image"
                   lazy
-                  :src="push['封面']"
+                              :src="$common.imageSrc(push['封面'])"
                   fit="cover">
         </el-image>
 
@@ -214,6 +214,12 @@
     watch: {
       '$store.state.webInfo.notices'() {
         this.renderNotice();
+      },
+      '$store.state.sysConfig': {
+        deep: true,
+        handler() {
+          this.renderNotice();
+        }
       }
     },
 
@@ -256,7 +262,7 @@
         const raw = this.$store.state.webInfo.notices;
         const notices = typeof raw === 'string' ? raw : (raw ? String(raw) : '');
         try {
-          const md = new MarkdownIt({ breaks: true });
+           const md = this.$common.applyImagePrefix(new MarkdownIt({ breaks: true }));
           this.noticeHtml = md.render(notices);
         } catch (e) {
           this.noticeHtml = notices;

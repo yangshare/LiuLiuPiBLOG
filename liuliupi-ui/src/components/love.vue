@@ -5,7 +5,7 @@
       <!-- 背景图片 -->
       <el-image class="love-image my-el-image"
                 lazy
-                :src="love.bgCover"
+                :src="$common.imageSrc(love.bgCover)"
                 fit="cover">
         <div slot="error" class="image-slot"></div>
       </el-image>
@@ -13,7 +13,7 @@
       <!-- 对象 -->
       <div class="love-wrap transformCenter">
         <div>
-          <el-avatar class="love-avatar" :src="love.manCover"></el-avatar>
+        <el-avatar class="love-avatar" :src="$common.imageSrc(love.manCover)"></el-avatar>
           <div class="love-title">
             {{love.manName}}
           </div>
@@ -22,7 +22,7 @@
           <img class="love-img" :src="$store.state.sysConfig['webStaticResourcePrefix'] + 'assets/loveLike.svg'" alt="心心">
         </div>
         <div>
-          <el-avatar class="love-avatar" :src="love.womanCover"></el-avatar>
+        <el-avatar class="love-avatar" :src="$common.imageSrc(love.womanCover)"></el-avatar>
           <div class="love-title">
             {{love.womanName}}
           </div>
@@ -206,7 +206,7 @@
               <div class="family-wrap"
                    :style="{ background: 'url(' + item.bgCover + ') center center / cover no-repeat' }">
                 <div>
-                  <el-avatar class="family-avatar" :src="item.manCover"></el-avatar>
+                  <el-avatar class="family-avatar" :src="$common.imageSrc(item.manCover)"></el-avatar>
                   <div class="family-title">
                     {{item.manName}}
                   </div>
@@ -215,7 +215,7 @@
                   <img class="family-img" :src="$store.state.sysConfig['webStaticResourcePrefix'] + 'assets/loveLike.svg'" alt="心心">
                 </div>
                 <div>
-                  <el-avatar class="family-avatar" :src="item.womanCover"></el-avatar>
+                  <el-avatar class="family-avatar" :src="$common.imageSrc(item.womanCover)"></el-avatar>
                   <div class="family-title">
                     {{item.womanName}}
                   </div>

@@ -8,7 +8,7 @@
                 style="position: absolute"
                 v-once
                 lazy
-                :src="$store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)]"
+                :src="$common.imageSrc($store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)])"
                 fit="cover">
         <div slot="error" class="image-slot"></div>
       </el-image>
@@ -62,7 +62,7 @@
                 style="position: absolute"
                 v-once
                 lazy
-                :src="$store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)]"
+                :src="$common.imageSrc($store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)])"
                 fit="cover">
         <div slot="error" class="image-slot"></div>
       </el-image>
@@ -70,7 +70,7 @@
         <div class="user-left">
           <div>
             <el-avatar class="user-avatar" @click.native="changeDialog('修改头像')" :size="60"
-                       :src="currentUser.avatar"></el-avatar>
+                       :src="$common.imageSrc(currentUser.avatar)"></el-avatar>
           </div>
           <div class="myCenter" style="margin-top: 12px">
             <div class="user-title">

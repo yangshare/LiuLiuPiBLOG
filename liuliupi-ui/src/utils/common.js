@@ -62,6 +62,39 @@ export default {
     return content;
   },
 
+  imageSrc(path) {
+    if (typeof path !== "string" || path.trim() === "") {
+      return "";
+    }
+    const value = path.trim();
+    if (/^(?:https?:|\/\/|data:|blob:)/i.test(value)) {
+      return value;
+    }
+
+    const config = store.state.sysConfig || {};
+    const webInfo = store.state.webInfo || {};
+    const storeType = localStorage.getItem("defaultStoreType") || webInfo.defaultStoreType || "qiniu";
+    const prefix = storeType === "local" ? config["local.downloadUrl"] : config["qiniu.downloadUrl"];
+    if (typeof prefix !== "string" || prefix.trim() === "") {
+      return "";
+    }
+    return prefix.replace(/\/+$/, "") + "/" + value.replace(/^\/+/, "");
+  },
+
+  applyImagePrefix(md) {
+    const defaultImageRule = md.renderer.rules.image;
+    md.renderer.rules.image = (tokens, idx, options, env, self) => {
+      const token = tokens[idx];
+      const src = token.attrGet("src");
+      token.attrSet("src", this.imageSrc(src));
+      if (defaultImageRule) {
+        return defaultImageRule(tokens, idx, options, env, self);
+      }
+      return self.renderToken(tokens, idx, options);
+    };
+    return md;
+  },
+
   /**
    * 图片转换
    */
@@ -70,7 +103,7 @@ export default {
       let index = word.indexOf(",");
       if (index > -1) {
         let arr = word.replace("[", "").replace("]", "").split(",");
-        return '<img loading="lazy" class="pictureReg" style="border-radius: 5px;width: 100%;max-width: 250px;display: block" src="' + arr[1] + '" title="' + arr[0] + '"/>';
+        return '<img loading="lazy" class="pictureReg" style="border-radius: 5px;width: 100%;max-width: 250px;display: block" src="' + this.imageSrc(arr[1]) + '" title="' + arr[0] + '"/>';
       } else {
         return word;
       }

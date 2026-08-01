@@ -72,7 +72,7 @@
               <div v-for="(item, index) in value" :key="index" @click="toUrl(item.url)" class="favorite-item">
                 <div>
                   <el-avatar class="favorite-item-image" :size="60"
-                             :src="item.cover">
+                             :src="$common.imageSrc(item.cover)">
                   </el-avatar>
                 </div>
                 <div style="width: calc(100% - 80px)">

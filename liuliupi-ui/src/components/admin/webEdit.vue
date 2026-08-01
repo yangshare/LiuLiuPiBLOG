@@ -119,7 +119,7 @@
                  v-for="(avatar, i) in randomAvatar">
               <el-image lazy class="random-image-thumb"
                         :preview-src-list="[avatar]"
-                        :src="avatar"
+                        :src="$common.imageSrc(avatar)"
                         fit="cover"></el-image>
               <el-tag
                 class="random-image-url"
@@ -156,7 +156,7 @@
                  v-for="(cover, i) in randomCover">
               <el-image lazy class="random-image-thumb"
                         :preview-src-list="[cover]"
-                        :src="cover"
+                        :src="$common.imageSrc(cover)"
                         fit="cover"></el-image>
               <el-tag
                 class="random-image-url"
