@@ -204,7 +204,7 @@
             <div v-for="(item, index) in randomFamily" :key="index"
                  @click="changeFamily(item)">
               <div class="family-wrap"
-                   :style="{ background: 'url(' + item.bgCover + ') center center / cover no-repeat' }">
+                   :style="{ background: 'url(' + $common.imageSrc(item.bgCover) + ') center center / cover no-repeat' }">
                 <div>
                   <el-avatar class="family-avatar" :src="$common.imageSrc(item.manCover)"></el-avatar>
                   <div class="family-title">
