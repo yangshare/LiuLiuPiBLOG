@@ -1,6 +1,21 @@
 const CompressionPlugin = require('compression-webpack-plugin')
 
 module.exports = {
+  transpileDependencies: [
+    'naive-ui',
+    'vueuc',
+    '@css-render',
+    'css-render',
+    '@juggle',
+    'vooks',
+    'evtd',
+    'element-plus',
+    '@ctrl',
+    '@vueuse',
+    'async-validator',
+    'date-fns',
+    'vue-router'
+  ],
   devServer: {
     port: 81,
     https: false,
