@@ -4,9 +4,8 @@
     <!-- 背景图片 -->
     <el-image class="my-el-image poem-image"
               style="position: absolute;margin-top: -50px"
-              v-once
               lazy
-              :src="$common.imageSrc($store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)])"
+              :src="$common.imageSrc(backgroundCover)"
               fit="cover">
       <div slot="error" class="image-slot"></div>
     </el-image>
@@ -44,8 +43,21 @@
           "hitokoto": "...",
           "from": "...",
           "from_who": "..."
-        }
+        },
+        // 随机选一张 randomCover，只选一次避免重渲染抖动
+        backgroundCover: ""
       };
+    },
+    watch: {
+      '$store.state.webInfo.randomCover': {
+        immediate: true,
+        handler(covers) {
+          if (this.backgroundCover || !covers || !covers.length) {
+            return;
+          }
+          this.backgroundCover = covers[Math.floor(Math.random() * covers.length)];
+        }
+      }
     },
     created() {
       if (!this.isShehui) {

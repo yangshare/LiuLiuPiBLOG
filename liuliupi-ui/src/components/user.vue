@@ -6,9 +6,8 @@
       <!-- 背景图片 -->
       <el-image class="my-el-image"
                 style="position: absolute"
-                v-once
                 lazy
-                :src="$common.imageSrc($store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)])"
+                :src="$common.imageSrc(backgroundCover)"
                 fit="cover">
         <div slot="error" class="image-slot"></div>
       </el-image>
@@ -60,9 +59,8 @@
       <!-- 背景图片 -->
       <el-image class="my-el-image"
                 style="position: absolute"
-                v-once
                 lazy
-                :src="$common.imageSrc($store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)])"
+                :src="$common.imageSrc(backgroundCover)"
                 fit="cover">
         <div slot="error" class="image-slot"></div>
       </el-image>
@@ -234,10 +232,23 @@
         dialogTitle: "",
         codeString: "验证码",
         passwordFlag: null,
-        intervalCode: null
+        intervalCode: null,
+        // 随机选一张 randomCover，只选一次避免重渲染抖动
+        backgroundCover: ""
       }
     },
     computed: {},
+    watch: {
+      '$store.state.webInfo.randomCover': {
+        immediate: true,
+        handler(covers) {
+          if (this.backgroundCover || !covers || !covers.length) {
+            return;
+          }
+          this.backgroundCover = covers[Math.floor(Math.random() * covers.length)];
+        }
+      }
+    },
     created() {
       this.getCaptcha();
     },

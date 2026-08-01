@@ -12,9 +12,8 @@
         <!-- 首页图片 -->
         <el-image style="animation: header-effect 2s"
                   class="background-image-index"
-                  v-once
                   lazy
-                  :src="$common.imageSrc(!$common.isEmpty($store.state.webInfo.backgroundImage)?$store.state.webInfo.backgroundImage:$store.state.webInfo.randomCover[Math.floor(Math.random() * $store.state.webInfo.randomCover.length)])"
+                  :src="$common.imageSrc(backgroundCover)"
                   fit="cover">
           <div slot="error" class="image-slot background-image-index-error"></div>
         </el-image>
@@ -207,7 +206,9 @@
           "category": ""
         },
         articles: [],
-        sortArticles: {}
+        sortArticles: {},
+        // 首屏背景：优先 backgroundImage，否则随机选一张 randomCover，只选一次避免重渲染抖动
+        backgroundCover: ''
       };
     },
 
@@ -220,11 +221,18 @@
         handler() {
           this.renderNotice();
         }
+      },
+      '$store.state.webInfo.backgroundImage'() {
+        this.pickBackgroundCover();
+      },
+      '$store.state.webInfo.randomCover'() {
+        this.pickBackgroundCover();
       }
     },
 
     created() {
       this.renderNotice();
+      this.pickBackgroundCover();
       this.getGuShi();
       this.getSortArticles();
     },
@@ -266,6 +274,21 @@
           this.noticeHtml = md.render(notices);
         } catch (e) {
           this.noticeHtml = notices;
+        }
+      },
+      pickBackgroundCover() {
+        // 只在首次拿到候选时选一次，之后不再更换（避免每次重渲染随机切换背景）
+        if (this.backgroundCover) {
+          return;
+        }
+        const webInfo = this.$store.state.webInfo;
+        if (!this.$common.isEmpty(webInfo.backgroundImage)) {
+          this.backgroundCover = webInfo.backgroundImage;
+          return;
+        }
+        const covers = webInfo.randomCover || [];
+        if (covers.length) {
+          this.backgroundCover = covers[Math.floor(Math.random() * covers.length)];
         }
       },
       async selectSort(sort) {

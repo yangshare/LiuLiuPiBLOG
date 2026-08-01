@@ -88,6 +88,33 @@ describe('index.vue', () => {
     expect(wrapper.vm.noticeHtml).toContain('<h1>异步公告</h1>')
   })
 
+  it('rerenders the background image when the download prefix arrives asynchronously', async () => {
+    const state = Vue.observable({
+      webInfo: {
+        notices: '',
+        backgroundImage: 'randomCover/home.jpg',
+        randomCover: []
+      },
+      sortInfo: [],
+      downloadPrefix: ''
+    })
+    const wrapper = createWrapper({
+      mocks: {
+        $store: { state },
+        $common: {
+          imageSrc: (value) => state.downloadPrefix ? state.downloadPrefix + value : ''
+        }
+      }
+    })
+
+    expect(wrapper.find('el-image-stub').attributes('src')).toBe('')
+
+    state.downloadPrefix = 'https://cdn.example.com/'
+    await Vue.nextTick()
+
+    expect(wrapper.find('el-image-stub').attributes('src')).toBe('https://cdn.example.com/randomCover/home.jpg')
+  })
+
   it('renders raw text when markdown render throws', () => {
     const renderNoticeSpy = jest.spyOn(Index.methods, 'renderNotice').mockImplementation(() => {})
     const wrapper = createWrapper({

@@ -5,7 +5,6 @@
       <div class="article-head my-animation-slide-top">
         <!-- 背景图片 -->
         <el-image class="article-image my-el-image"
-                  v-once
                   lazy
                   :src="$common.imageSrc(article.articleCover)"
                   fit="cover">

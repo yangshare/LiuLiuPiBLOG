@@ -7,7 +7,6 @@
       <!-- 封面 -->
       <div class="recent-post-item-image">
         <el-image class="my-el-image"
-                  v-once
                   lazy
                   :src="$common.imageSrc(article.articleCover)"
                   fit="cover">

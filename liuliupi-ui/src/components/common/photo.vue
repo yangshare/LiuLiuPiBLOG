@@ -5,9 +5,8 @@
          class="card-item wow shadow-box-mini">
       <div class="card-image">
         <el-image class="my-el-image"
-                  v-once
                   lazy
-                  :preview-src-list="[resourcePath.cover]"
+                  :preview-src-list="[$common.imageSrc(resourcePath.cover)]"
                   :src="$common.imageSrc(resourcePath.cover)"
                   fit="cover">
           <div slot="error" class="image-slot"></div>

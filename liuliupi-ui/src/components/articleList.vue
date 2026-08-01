@@ -22,7 +22,6 @@
       <div class="recent-post-item-image" :class="{ leftImage: index % 2 !== 0, rightImage: index % 2 === 0 }">
         <div class="image-container">
           <el-image class="my-el-image"
-                    v-once
                     lazy
                     :src="$common.imageSrc(article.articleCover)"
                     fit="cover">

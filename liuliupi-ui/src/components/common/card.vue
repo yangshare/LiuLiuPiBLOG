@@ -6,7 +6,6 @@
          @click="clickResourcePath(resourcePath)">
       <div class="card-image">
         <el-image class="my-el-image"
-                  v-once
                   lazy
                   :src="$common.imageSrc(resourcePath.cover)"
                   fit="cover">

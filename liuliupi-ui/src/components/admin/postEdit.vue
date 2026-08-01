@@ -67,7 +67,7 @@
           <el-image class="table-td-thumb"
                     lazy
                     style="margin-left: 10px"
-                    :preview-src-list="[article.articleCover]"
+                    :preview-src-list="[$common.imageSrc(article.articleCover)]"
                     :src="$common.imageSrc(article.articleCover)"
                     fit="cover"></el-image>
         </div>

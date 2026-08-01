@@ -8,6 +8,11 @@ config.mocks.$common = {
   imageSrc: (value) => value || ''
 }
 
+const ElImageStub = {
+  props: ['previewSrcList'],
+  template: '<div />'
+}
+
 describe('webEdit.vue', () => {
   let getWebInfoSpy
 
@@ -69,6 +74,42 @@ describe('webEdit.vue', () => {
     const grids = wrapper.findAll('.random-image-grid')
     expect(grids).toHaveLength(2)
     expect(wrapper.findAll('.random-image-item')).toHaveLength(2)
+  })
+
+  it('uses resolved URLs for random image previews', () => {
+    const wrapper = shallowMount(WebEdit, {
+      data() {
+        return {
+          randomAvatar: ['randomAvatar/avatar.jpg'],
+          randomCover: ['randomCover/cover.jpg']
+        }
+      },
+      mocks: {
+        $common: {
+          ...config.mocks.$common,
+          imageSrc: (value) => 'https://cdn.example.com/' + value
+        }
+      },
+      stubs: {
+        'el-tabs': true,
+        'el-tab-pane': true,
+        'el-form': true,
+        'el-form-item': true,
+        'el-input': true,
+        'el-switch': true,
+        'el-button': true,
+        'el-card': true,
+        'el-tag': true,
+        'el-image': ElImageStub,
+        'el-dialog': true,
+        ImageUrlInput: true,
+        uploadPicture: true
+      }
+    })
+
+    const previews = wrapper.findAllComponents(ElImageStub)
+    expect(previews.at(0).props('previewSrcList')).toEqual(['https://cdn.example.com/randomAvatar/avatar.jpg'])
+    expect(previews.at(1).props('previewSrcList')).toEqual(['https://cdn.example.com/randomCover/cover.jpg'])
   })
 
   it('opens add url dialog with correct type', () => {
