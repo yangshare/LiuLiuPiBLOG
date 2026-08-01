@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -184,7 +185,7 @@ public class QiniuUtil implements StoreService {
      * @param items         单次迭代返回的七牛文件信息
      * @param existingPaths 数据库中已存在的 resource.path 集合，用于去重
      */
-    static List<Resource> buildNewResources(FileInfo[] items, java.util.Collection<String> existingPaths) {
+    static List<Resource> buildNewResources(FileInfo[] items, Collection<String> existingPaths) {
         List<Resource> resources = new ArrayList<>();
         for (FileInfo item : items) {
             if (item.fsize != 0L && !existingPaths.contains(item.key)) {
