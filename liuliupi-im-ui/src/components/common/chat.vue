@@ -30,7 +30,7 @@
                       lazy
                       style="cursor: pointer"
                       @click="openFriendCircle(item.fromId, item.avatar)"
-                      :src="item.avatar"/>
+                      :src="$common.imageSrc(item.avatar)"/>
           </div>
 
           <!-- 文本消息 -->
@@ -54,7 +54,7 @@
                       lazy
                       style="cursor: pointer"
                       @click="openFriendCircle(item.fromId, item.avatar, item.username)"
-                      :src="item.avatar"/>
+                      :src="$common.imageSrc(item.avatar)"/>
           </div>
 
           <!-- 文本消息 -->
@@ -181,7 +181,7 @@
           <div id="image-scroll-container" class="image-list">
             <n-image
               v-for="(item, index) in imageList"
-              :src="item"
+              :src="$common.imageSrc(item)"
               @click="sendImage(item)"
               :key="index"
               width="70"

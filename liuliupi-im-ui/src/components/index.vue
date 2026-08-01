@@ -6,7 +6,7 @@
           <!-- 头像 -->
           <div>
             <n-avatar lazy object-fit="cover" @click="changeAvatar(1)" class="user-thumb"
-                      :src="$store.state.currentUser.avatar"/>
+                      :src="$common.imageSrc($store.state.currentUser.avatar)"/>
           </div>
           <!-- 聊天 -->
           <div id="chat" class="friend-chat aside-active" @click="isActive($event, 'aside-active', 1)">
@@ -150,7 +150,7 @@
                     <n-avatar object-fit="cover"
                               lazy
                               :size="40"
-                              :src="groups[item].avatar"/>
+                              :src="$common.imageSrc(groups[item].avatar)"/>
                   </n-badge>
                 </div>
                 <div class="im-user-right">
@@ -172,7 +172,7 @@
                     <n-avatar object-fit="cover"
                               lazy
                               :size="40"
-                              :src="friends[item].avatar"/>
+                              :src="$common.imageSrc(friends[item].avatar)"/>
                   </n-badge>
                 </div>
                 <div class="im-user-right">
@@ -223,7 +223,7 @@
                             style="cursor: pointer"
                             @click.stop="openFriendCircle(item.friendId, item.avatar)"
                             :size="40"
-                            :src="item.avatar"/>
+                            :src="$common.imageSrc(item.avatar)"/>
                 </div>
                 <div class="im-friend">
                   {{item.remark}}
@@ -248,7 +248,7 @@
                 <n-avatar object-fit="cover"
                           :size="45"
                           lazy
-                          :src="item.avatar"/>
+                            :src="$common.imageSrc(item.avatar)"/>
               </div>
               <div class="im-user-right">
                 <div>{{item.groupName}}</div>
@@ -329,7 +329,7 @@
                 <n-avatar object-fit="cover"
                           :size="50"
                           lazy
-                          :src="item.avatar"/>
+                            :src="$common.imageSrc(item.avatar)"/>
               </div>
 
               <!-- 内容 -->
@@ -369,7 +369,7 @@
                   <n-avatar object-fit="cover"
                             :size="60"
                             lazy
-                            :src="friends[currentFriendId].avatar"/>
+                            :src="$common.imageSrc(friends[currentFriendId].avatar)"/>
 
                   <span style="margin: 0 5px 0 15px;font-size: 16px">{{friends[currentFriendId].remark}}</span>
                   <span style="cursor: pointer;margin-top: 6px" @click="changeDataType(1)">

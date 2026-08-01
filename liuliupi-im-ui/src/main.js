@@ -59,6 +59,22 @@ app.config.globalProperties.$http = http
 app.config.globalProperties.$common = common
 app.config.globalProperties.$constant = constant
 
+http.get(constant.baseURL + "/sysConfig/listSysConfig")
+  .then((res) => {
+    if (res && res.data) {
+      store.commit("loadSysConfig", res.data)
+    }
+  })
+  .catch(() => {})
+
+http.get(constant.baseURL + "/webInfo/getWebInfo")
+  .then((res) => {
+    if (res && res.data && res.data.defaultStoreType) {
+      localStorage.setItem("defaultStoreType", res.data.defaultStoreType)
+    }
+  })
+  .catch(() => {})
+
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
     if (to.path === "/") {

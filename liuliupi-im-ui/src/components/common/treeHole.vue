@@ -11,7 +11,7 @@
                     lazy
                     class="avatar-img"
                     :size="36"
-                    :src="avatar"/>
+                    :src="$common.imageSrc(avatar)"/>
           <div class="tree-hole-box"
                :style="{background: $constant.tree_hole_color[index % $constant.tree_hole_color.length]}">
             <div class="box-tag" v-if="index % 2 === 0 && !$common.mobile()"
