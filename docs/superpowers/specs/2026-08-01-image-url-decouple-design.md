@@ -59,20 +59,23 @@
 
 ```js
 function imageSrc(path) {
-  if (!path) return ''
-  if (/^https?:\/\//.test(path)) return path        // 完整URL（外部图/漏迁历史）原样返回，保兼容
-  const storeType = localStorage.getItem('defaultStoreType')
-  const sysConfig = store.state.sysConfig
-  const prefix = storeType === 'qiniu'
-    ? sysConfig['qiniu.downloadUrl']
-    : sysConfig['local.downloadUrl']
-  return prefix.replace(/\/$/, '') + '/' + path.replace(/^\//, '')
+  if (typeof path !== 'string' || !path.trim()) return ''
+  const value = path.trim()
+  if (/^(https?:|\/\/|data:|blob:)/i.test(value)) return value
+  const storeType = localStorage.getItem('defaultStoreType') || store.state.webInfo.defaultStoreType || 'qiniu'
+  const sysConfig = store.state.sysConfig || {}
+  const prefix = storeType === 'local'
+    ? sysConfig['local.downloadUrl']
+    : sysConfig['qiniu.downloadUrl']
+  if (!prefix) return ''                         // 配置异步加载时不抛异常
+  return prefix.replace(/\/+$/, '') + '/' + value.replace(/^\/+/, '')
 }
 ```
 
-- `http(s)://` 开头直接返回 —— 兼容外部图床与漏迁的历史完整 URL。
+- `http(s)://`、`//`、`data:`、`blob:` 开头直接返回 —— 兼容外部图床与漏迁的历史完整 URL。
 - `storeType` 取自已有的 `localStorage.defaultStoreType`。
 - `qiniu.downloadUrl` 已在 `sys_config`，前端 `sysConfig` 可直接取，零改动。
+- 配置尚未加载或前缀为空时返回空字符串，避免首屏渲染调用 `undefined.replace`。
 
 ### 2. 上传链路改造（改存 key，5 处）
 
@@ -93,7 +96,16 @@ function imageSrc(path) {
 
 前端 local 分支 `uploadPicture.vue:149` `url = response.data` 自动跟随后端返回，无需单独改。
 
-> `ImageUrlInput.vue`（封面输入框）、`$common.saveResource`（写 `resource.path`）均透传上传结果，自动拿到 key，不需单独改。
+> `ImageUrlInput.vue` 的预览和 `$common.saveResource`（写 `resource.path`）均必须支持 key；预览同样通过 `imageSrc` 渲染。
+
+### 2.1 存储生命周期
+
+路径契约改变后，所有存储实现都只接受 key/relativePath：
+
+- `LocalUtil.saveFile` 返回 relativePath；`deleteFile` 先将 key 解析为 `uploadUrl + relativePath`，删除成功后按 key 删除 `resource` 记录。
+- `QiniuUtil.deleteFile` 将 key 直接提交给七牛，成功后按 key 删除 `resource` 记录。
+- `QiniuUtil.saveFileInfo` 用 key 与 `resource.path` 比较，并只写入 key，不能重新写回完整 URL。
+- 资源删除、资源列表预览、资源同步必须加入回归测试。
 
 ### 3. 渲染层改造
 
@@ -104,7 +116,7 @@ function imageSrc(path) {
 - 文章封面 `articleCover`：详情 `article.vue` + 列表页
 - 用户头像 `avatar`：header / aside / 评论头像等多处
 - 照片墙 `resourcePath.cover`：`photo.vue:11`
-- 文章视频 `videoUrl`：⚠️待确认是否也在七牛（见「实现待核对项」）
+- 文章视频 `videoUrl`：暂不纳入图片解析；确认其加密/存储格式后另行设计媒体 URL 处理
 
 > 实现时需 grep 全量覆盖所有 `:src` / `v-html` 涉及图片字段处，3.1/3.2 仅列出已定位的关键点。
 
@@ -119,13 +131,15 @@ function imageSrc(path) {
 | 评论 | `comment.vue:52,78` `v-html` | 评论图为 `[name,url]` 转 `<img>`，在转换处对 url 拼前缀 |
 | 树洞/历程 | `treeHole.vue:17`、`process.vue:21` `v-html` | 同评论，在内容中图片 url 出现处拼前缀 |
 
-> `article.vue` 与 `index.vue` 的 markdown-it image 前缀处理复用同一共享函数。
+> `article.vue` 与 `index.vue` 的 markdown-it image 前缀处理复用同一共享函数；配置异步加载时需在配置更新后重新渲染 Markdown。
 
 ### 4. 后端：补发 `local.downloadUrl`
 
 `qiniu.downloadUrl` 在 `sys_config` 表，后端 `@Value` 与前端 `sysConfig` 均可获取。`local.downloadUrl` 仅在 `application.yml`，**前端 `sysConfig` 拿不到**。
 
 在 `/sysConfig/listSysConfig` 返回结果中，额外 put 一项 `local.downloadUrl`（值取自后端 `@Value("${local.downloadUrl}")`）。保持本地配置仍统一在 `application.yml`，不割裂到数据库。
+
+主站和 IM 启动时都拉取 `/sysConfig/listSysConfig` 并持久化到各自的 Vuex/localStorage，避免 IM 直接打开且没有主站缓存时无法解析 key。
 
 > 本地存储当前未启用，此补发为「未来切到本地存储时前端能拿到前缀」的完整性保障。
 
@@ -137,48 +151,33 @@ function imageSrc(path) {
 |---|---|---|
 | `article` | `article_cover` | 文章封面 |
 | `article` | `article_content` | 正文 markdown（图片 URL 内嵌） |
-| `article` | `video_url` | 视频（⚠️待确认是否七牛） |
+| `article` | `video_url` | 视频字段，暂不纳入图片迁移；需另行确认加密/存储格式 |
 | `` `user` `` | `avatar` | 用户头像 |
-| `comment` | `comment_content` | 评论 `[name,url]`（表名/字段名待核对 `Comment` 实体） |
-| `resource_path` | `cover`, `url` | 照片墙 / 收藏 |
+| `comment` | `comment_content` | 评论 `[name,url]` |
+| `resource_path` | `cover` | 照片墙 / 收藏封面；`url` 是跳转链接，不迁移 |
 | `resource` | `path` | 所有上传资源记录 |
 | `im_chat_user_message` | `content` | IM 用户消息 `[username,url]` |
 | `im_chat_user_group_message` | `content` | IM 群消息 |
-| `web_info` | `randomCover` / 背景图 | ⚠️存储方式（JSON？逗号分隔？）待核对 |
+| `im_chat_group` | `avatar` | IM 群头像 |
+| `web_info` | `background_image`, `avatar`, `random_avatar`, `random_cover` | 网站图片；随机字段为 JSON 字符串 |
+| `push_notification` | `cover` | 首页推送封面 |
+| `family` | `bg_cover`, `man_cover`, `woman_cover` | 家庭页图片 |
+| `tree_hole` | `avatar` | 树洞头像 |
 
 排除项：`wei_yan`（树洞/微言）`content` 为纯文本，无图片字段。
 
 #### 5.2 迁移机制
 
-核心：`REPLACE(field, '旧CDN域名/', '')` —— 纯字符串替换。无论字段是 markdown、`[name,url]` 还是纯 URL，把旧域名前缀替换为空即留 key。历史数据均为七牛，仅需 strip 七牛旧 CDN 域名。
+核心：`REPLACE(field, '旧CDN域名/', '')` —— 只对已确认的图片字段执行。`resource_path.url`（跳转链接）和 `article.video_url`（视频/可能加密）不得套用图片迁移。迁移前必须执行目标 key 冲突预检，并在维护窗口内以事务执行，避免写入竞态和部分提交。
 
-#### 5.3 SQL 骨架
+#### 5.3 SQL 脚本
 
-```sql
--- 0. 先备份!!  mysqldump -u root -p liuliupi_blog > backup_20260801.sql
--- 0.1 设置旧CDN域名（改成实际值，含 https:// 和结尾 /）
-SET @old := 'https://file.yangshare.com/';
+可执行脚本见 [`docs/superpowers/migrations/2026-08-01-image-url-decouple.sql`](E:/外包项目/个人博客站点/LiuLiuPiBLOG/docs/superpowers/migrations/2026-08-01-image-url-decouple.sql)。脚本包含：
 
--- 1. dry-run 预览（只查不更新）
-SELECT 'article_content' AS f, COUNT(*) AS hit FROM article WHERE article_content LIKE CONCAT('%', @old, '%')
-UNION ALL SELECT 'article_cover',  COUNT(*) FROM article WHERE article_cover  LIKE CONCAT('%', @old, '%')
-UNION ALL SELECT 'user.avatar',    COUNT(*) FROM `user` WHERE avatar LIKE CONCAT('%', @old, '%')
-UNION ALL SELECT 'resource.path',  COUNT(*) FROM resource WHERE path LIKE CONCAT('%', @old, '%')
-UNION ALL SELECT 'im_user_msg',    COUNT(*) FROM im_chat_user_message WHERE content LIKE CONCAT('%', @old, '%');
--- ...其余各表同构
-
--- 2. 执行 strip（dry-run 确认无误后）
-UPDATE article SET article_content = REPLACE(article_content, @old, '') WHERE article_content LIKE CONCAT('%', @old, '%');
-UPDATE article SET article_cover   = REPLACE(article_cover,   @old, '') WHERE article_cover   LIKE CONCAT('%', @old, '%');
-UPDATE `user`  SET avatar          = REPLACE(avatar,          @old, '') WHERE avatar          LIKE CONCAT('%', @old, '%');
-UPDATE resource SET path           = REPLACE(path,            @old, '') WHERE path            LIKE CONCAT('%', @old, '%');
-UPDATE im_chat_user_message        SET content = REPLACE(content, @old, '') WHERE content LIKE CONCAT('%', @old, '%');
--- ...其余各表同构
-
--- 3. 验证（所有残留应为 0）
-SELECT COUNT(*) AS residual FROM article WHERE article_content LIKE CONCAT('%', @old, '%');
--- 若历史上有过多个 CDN 域名：改 @old 重复步骤 1-3
-```
+1. 先备份数据库，并 dry-run 统计完整字段清单。
+2. 预检 `resource.path` 去域名后的唯一键冲突；有冲突时先人工合并，禁止直接执行 UPDATE。
+3. 停止写入后 `START TRANSACTION` 执行图片字段迁移；`resource_path.url` 和 `article.video_url` 明确排除。
+4. 提交后执行残留检查；历史上存在多个 CDN 域名时，逐个设置 `@old` 重复预检和迁移。
 
 ### 6. 数据流
 
@@ -213,17 +212,22 @@ SELECT COUNT(*) AS residual FROM article WHERE article_content LIKE CONCAT('%', 
 #### 8.1 单元测试
 
 - `$common.imageSrc`：完整 URL / 相对 key / local 分支 / qiniu 分支 / 空值，各分支断言。
+- 配置未加载、未知存储类型、协议相对 URL、`data:`/`blob:` URL 不抛异常且结果正确。
+- `applyImagePrefix`、`pictureReg`：key、完整 URL、外部协议和配置异步更新后的渲染结果。
+- `LocalUtil`/`QiniuUtil`：key 删除、资源记录删除、七牛资源扫描不会重新写入完整 URL。
 
 #### 8.2 迁移验证
 
 - dry-run `SELECT` 各表命中行数；
+- `resource.path` 去域名后的目标 key 冲突数必须为 0；
 - 执行后 `SELECT COUNT(*) ... LIKE '%旧域名%'` 残留归零；
-- 抽样确认 `article_content` 中 `![alt](key)`、评论 `[name,key]` 格式正确。
+- 抽样确认 `article_content` 中 `![alt](key)`、评论 `[name,key]` 格式正确，并验证 JSON 随机图片字段仍可解析。
 
 #### 8.3 端到端（核心验收）
 
 - 改 `sys_config.qiniu.downloadUrl` 为新域名 → **不碰数据库、不重新上传**，文章封面/正文/头像/评论图全部切到新域名显示。
 - 新上传一张图 → 库里存的是 key（不含域名）→ 前端渲染拼新域名显示。
+- 资源管理页删除本地/七牛资源后，对象和 `resource` 记录均被删除。
 
 #### 8.4 回归
 
@@ -236,25 +240,21 @@ SELECT COUNT(*) AS residual FROM article WHERE article_content LIKE CONCAT('%', 
 |---|---|
 | 迁移误伤非图片数据 | `REPLACE` 仅针对确定的旧域名字符串；执行前 dry-run 预览命中范围；全程备份。 |
 | 迁移后仍有个别图挂 | 先按残留 SELECT 排查是否漏迁/多域名；imageSrc 兼容完整 URL 提供软兼容。 |
-| 上线过渡期数据混存（新 key + 旧完整 URL） | imageSrc 对 `http://` 开头原样返回，过渡期两种数据都能正确渲染。 |
+| 上线过渡期数据混存（新 key + 旧完整 URL） | 先部署可读两种格式的渲染代码，再停写迁移；`imageSrc` 对完整 URL 原样返回。 |
 | 回退 | `source backup_20260801.sql` 恢复数据库；代码改动按 commit 回滚。 |
 
 ## 依赖
 
 - 已有依赖：`markdown-it`（article/index 渲染）、`sys_config` 配置机制、`localStorage.defaultStoreType`
-- 后端改动：`LocalUtil.saveFile`、`/sysConfig/listSysConfig` 补发 `local.downloadUrl`
+- 后端改动：`LocalUtil`/`QiniuUtil` 生命周期、`/sysConfig/listSysConfig` 补发 `local.downloadUrl`
 - 数据库：一次性迁移 SQL（无表结构变更）
 
-## 实现待核对项
+## 实现约束
 
-实现阶段需精确确认以下内容（设计阶段已定位、未 100% 落实）：
-
-- [ ] `article.video_url` 是否存七牛地址、是否纳入渲染拼接与迁移。
-- [ ] `Comment` 实体的表名与图片字段名（迁移 SQL 中 `comment` / `comment_content`）。
-- [ ] `web_info` 中 `randomCover` / 背景图的存储方式（JSON / 逗号分隔 / 多字段），据此决定迁移 SQL 写法。
-- [ ] IM 消息表实际表名（`im_chat_user_message` / `im_chat_user_group_message`）与字段名。
-- [ ] 渲染点全量：grep 所有 `:src` / `v-html` 涉及图片字段处，逐一替换为 `imageSrc` 或在渲染源头拼前缀。
-- [ ] 旧 CDN 域名确切值（可从 `sys_config.qiniu.downloadUrl` 当前值或历史值获取），含协议与结尾斜杠。
+- `article.video_url` 暂不迁移，确认加密/存储格式后另行设计媒体 URL 处理。
+- 迁移脚本中的表名和字段已按实体与建表 SQL 核对；执行前仍需将 `@old` 替换为实际历史域名。
+- 所有 `:src` / `v-html` 图片字段必须通过 `imageSrc` 或渲染源头处理；静态资源继续使用 `webStaticResourcePrefix`。
+- 发布顺序：部署兼容读路径 → 停止上传/编辑写入 → 备份并执行迁移 → 验证残留与冲突 → 开放写入。
 
 ## 验收标准
 
