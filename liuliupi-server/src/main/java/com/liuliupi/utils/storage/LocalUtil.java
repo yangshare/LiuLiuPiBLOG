@@ -39,18 +39,30 @@ public class LocalUtil implements StoreService {
         }
 
         for (String filePath : files) {
-            File file = new File(filePath.replace(downloadUrl, uploadUrl));
+            String relativePath = stripDownloadPrefix(filePath);
+            File file = new File(uploadUrl + relativePath);
             if (file.exists() && file.isFile()) {
                 if (file.delete()) {
-                    log.info("文件删除成功：" + filePath);
-                    resourceService.lambdaUpdate().eq(Resource::getPath, filePath).remove();
+                    log.info("文件删除成功：" + relativePath);
+                    resourceService.lambdaUpdate().eq(Resource::getPath, relativePath).remove();
                 } else {
-                    log.error("文件删除失败：" + filePath);
+                    log.error("文件删除失败：" + relativePath);
                 }
             } else {
-                log.error("文件不存在或者不是一个文件：" + filePath);
+                log.error("文件不存在或者不是一个文件：" + relativePath);
             }
         }
+    }
+
+    private String stripDownloadPrefix(String path) {
+        if (path == null) {
+            return "";
+        }
+        String prefix = downloadUrl == null ? "" : downloadUrl.replaceAll("/+$", "") + "/";
+        if (!prefix.isEmpty() && path.startsWith(prefix)) {
+            return path.substring(prefix.length());
+        }
+        return path.replaceFirst("^/+", "");
     }
 
     @Override
@@ -85,7 +97,7 @@ public class LocalUtil implements StoreService {
             fileVO.getFile().transferTo(newFile);
             FileVO result = new FileVO();
             result.setAbsolutePath(absolutePath);
-            result.setVisitPath(downloadUrl + path);
+            result.setVisitPath(path);
             return result;
         } catch (IOException e) {
             log.error("文件上传失败：", e);

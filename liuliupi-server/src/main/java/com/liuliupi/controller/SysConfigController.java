@@ -8,6 +8,7 @@ import com.liuliupi.entity.SysConfig;
 import com.liuliupi.enums.PoetryEnum;
 import com.liuliupi.service.SysConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,9 @@ public class SysConfigController {
     @Autowired
     private SysConfigService sysConfigService;
 
+    @Value("${local.downloadUrl:}")
+    private String localDownloadUrl;
+
     /**
      * 查询系统参数
      */
@@ -39,6 +43,7 @@ public class SysConfigController {
         List<SysConfig> sysConfigs = wrapper.eq(SysConfig::getConfigType, Integer.toString(PoetryEnum.SYS_CONFIG_PUBLIC.getCode()))
                 .list();
         Map<String, String> collect = sysConfigs.stream().collect(Collectors.toMap(SysConfig::getConfigKey, SysConfig::getConfigValue));
+        collect.putIfAbsent("local.downloadUrl", localDownloadUrl);
         return PoetryResult.success(collect);
     }
 

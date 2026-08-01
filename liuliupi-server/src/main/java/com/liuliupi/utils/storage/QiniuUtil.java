@@ -71,7 +71,7 @@ public class QiniuUtil implements StoreService {
         BucketManager bucketManager = new BucketManager(auth, cfg);
         try {
             //单次批量请求的文件数量不得超过1000
-            String[] keyList = files.stream().map(path -> path.replace(downloadUrl, "")).toArray(String[]::new);
+            String[] keyList = files.stream().map(this::stripDownloadPrefix).toArray(String[]::new);
             BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
             batchOperations.addDeleteOp(bucket, keyList);
             Response response = bucketManager.batch(batchOperations);
@@ -81,7 +81,7 @@ public class QiniuUtil implements StoreService {
                 String key = keyList[i];
                 if (status.code == 200) {
                     log.info("文件删除成功：" + key);
-                    resourceService.lambdaUpdate().eq(Resource::getPath, downloadUrl + key).remove();
+                    resourceService.lambdaUpdate().eq(Resource::getPath, key).remove();
                 } else {
                     log.error("文件删除失败：" + key + "，原因：" + status.data.error);
                 }
@@ -99,6 +99,17 @@ public class QiniuUtil implements StoreService {
     @Override
     public String getStoreName() {
         return StoreEnum.QINIU.getCode();
+    }
+
+    private String stripDownloadPrefix(String path) {
+        if (path == null) {
+            return "";
+        }
+        String prefix = downloadUrl == null ? "" : downloadUrl.replaceAll("/+$", "") + "/";
+        if (!prefix.isEmpty() && path.startsWith(prefix)) {
+            return path.substring(prefix.length());
+        }
+        return path.replaceFirst("^/+", "");
     }
 
     public Map<String, Map<String, String>> getFileInfo(List<String> files) {
@@ -157,9 +168,9 @@ public class QiniuUtil implements StoreService {
         while (fileListIterator.hasNext()) {
             FileInfo[] items = fileListIterator.next();
             for (FileInfo item : items) {
-                if (item.fsize != 0L && !paths.contains(downloadUrl + item.key)) {
+                if (item.fsize != 0L && !paths.contains(item.key)) {
                     Resource re = new Resource();
-                    re.setPath(downloadUrl + item.key);
+                    re.setPath(item.key);
                     re.setType(CommonConst.PATH_TYPE_ASSETS);
                     re.setSize(Integer.valueOf(Long.toString(item.fsize)));
                     re.setMimeType(item.mimeType);
