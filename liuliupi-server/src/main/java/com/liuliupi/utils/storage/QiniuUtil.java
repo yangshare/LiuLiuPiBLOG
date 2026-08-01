@@ -167,18 +167,7 @@ public class QiniuUtil implements StoreService {
 
         while (fileListIterator.hasNext()) {
             FileInfo[] items = fileListIterator.next();
-            for (FileInfo item : items) {
-                if (item.fsize != 0L && !paths.contains(item.key)) {
-                    Resource re = new Resource();
-                    re.setPath(item.key);
-                    re.setType(CommonConst.PATH_TYPE_ASSETS);
-                    re.setSize(Integer.valueOf(Long.toString(item.fsize)));
-                    re.setMimeType(item.mimeType);
-                    re.setStoreType(StoreEnum.QINIU.getCode());
-                    re.setUserId(CommonConst.ADMIN_USER_ID);
-                    resources.add(re);
-                }
-            }
+            resources.addAll(buildNewResources(items, paths));
         }
 
         if (!CollectionUtils.isEmpty(resources)) {
@@ -186,5 +175,29 @@ public class QiniuUtil implements StoreService {
             System.out.println("保存数量：" + resources.size());
         }
         System.out.println("同步完成");
+    }
+
+    /**
+     * 把七牛列举到的 FileInfo[] 转换为待入库的 Resource 列表。
+     * path 只写 key（不含 downloadUrl），避免重新写入完整 URL。
+     *
+     * @param items         单次迭代返回的七牛文件信息
+     * @param existingPaths 数据库中已存在的 resource.path 集合，用于去重
+     */
+    static List<Resource> buildNewResources(FileInfo[] items, java.util.Collection<String> existingPaths) {
+        List<Resource> resources = new ArrayList<>();
+        for (FileInfo item : items) {
+            if (item.fsize != 0L && !existingPaths.contains(item.key)) {
+                Resource re = new Resource();
+                re.setPath(item.key);
+                re.setType(CommonConst.PATH_TYPE_ASSETS);
+                re.setSize(Integer.valueOf(Long.toString(item.fsize)));
+                re.setMimeType(item.mimeType);
+                re.setStoreType(StoreEnum.QINIU.getCode());
+                re.setUserId(CommonConst.ADMIN_USER_ID);
+                resources.add(re);
+            }
+        }
+        return resources;
     }
 }
