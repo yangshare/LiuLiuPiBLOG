@@ -13,6 +13,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Test run artifacts
+.test-output.txt
+
 # Editor directories and files
 .idea
 .vscode
