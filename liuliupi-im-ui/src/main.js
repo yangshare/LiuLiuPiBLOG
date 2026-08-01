@@ -69,8 +69,11 @@ http.get(constant.baseURL + "/sysConfig/listSysConfig")
 
 http.get(constant.baseURL + "/webInfo/getWebInfo")
   .then((res) => {
-    if (res && res.data && res.data.defaultStoreType) {
-      localStorage.setItem("defaultStoreType", res.data.defaultStoreType)
+    if (res && res.data) {
+      store.commit("loadWebInfo", res.data)
+      if (res.data.defaultStoreType) {
+        localStorage.setItem("defaultStoreType", res.data.defaultStoreType)
+      }
     }
   })
   .catch(() => {})

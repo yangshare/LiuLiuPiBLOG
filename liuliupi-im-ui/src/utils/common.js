@@ -76,7 +76,7 @@ export default {
     }
 
     const config = store.state.sysConfig || {};
-    const storeType = localStorage.getItem("defaultStoreType") || "qiniu";
+    const storeType = localStorage.getItem("defaultStoreType") || store.state.webInfo.defaultStoreType || "qiniu";
     const prefix = storeType === "local" ? config["local.downloadUrl"] : config["qiniu.downloadUrl"];
     if (typeof prefix !== "string" || prefix.trim() === "") {
       return "";
